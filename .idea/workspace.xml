@@ -115,6 +115,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="All" />
@@ -129,10 +130,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="423" y="29" key="CommitChangelistDialog2/0.0.1536.864@0.0.1536.864" timestamp="1606211099673" />
-    <state x="548" y="187" key="FileChooserDialogImpl" timestamp="1606040746462">
+    <state x="548" y="187" key="FileChooserDialogImpl" timestamp="1606211800772">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="548" y="187" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1606040746462" />
+    <state x="548" y="187" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1606211800772" />
     <state width="1476" height="152" key="GridCell.Tab.0.bottom" timestamp="1606211142146">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -149,10 +150,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state width="1476" height="152" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1606211142146" />
-    <state x="277" y="77" key="SettingsEditor" timestamp="1606040748437">
+    <state x="277" y="77" key="SettingsEditor" timestamp="1606211802778">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="277" y="77" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1606040748437" />
+    <state x="277" y="77" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1606211802778" />
     <state x="361" y="165" key="Vcs.Push.Dialog.v2" timestamp="1606211225128">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

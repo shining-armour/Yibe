@@ -15,6 +15,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1kdqDbPJmlpUgpvxcdcZJDmSgL8" />
@@ -63,32 +68,83 @@
       <option name="presentableId" value="Default" />
       <updated>1606040697757</updated>
     </task>
+    <task id="LOCAL-00001" summary="All">
+      <created>1606211106390</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1606211106390</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="All" />
+    <option name="LAST_COMMIT_MESSAGE" value="All" />
+  </component>
   <component name="WindowStateProjectService">
+    <state x="654" y="295" key="#Notifications" timestamp="1606211190919">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="654" y="295" key="#Notifications/0.0.1536.864@0.0.1536.864" timestamp="1606211190919" />
+    <state x="423" y="29" key="CommitChangelistDialog2" timestamp="1606211099673">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="423" y="29" key="CommitChangelistDialog2/0.0.1536.864@0.0.1536.864" timestamp="1606211099673" />
     <state x="548" y="187" key="FileChooserDialogImpl" timestamp="1606040746462">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="548" y="187" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1606040746462" />
-    <state width="1491" height="154" key="GridCell.Tab.0.bottom" timestamp="1606046031983">
+    <state width="1476" height="152" key="GridCell.Tab.0.bottom" timestamp="1606211142146">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1491" height="154" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1606046031983" />
-    <state width="1491" height="154" key="GridCell.Tab.0.center" timestamp="1606046031983">
+    <state width="1476" height="152" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1606211142146" />
+    <state width="1476" height="152" key="GridCell.Tab.0.center" timestamp="1606211142146">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1491" height="154" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1606046031983" />
-    <state width="1491" height="154" key="GridCell.Tab.0.left" timestamp="1606046031983">
+    <state width="1476" height="152" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1606211142146" />
+    <state width="1476" height="152" key="GridCell.Tab.0.left" timestamp="1606211142146">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1491" height="154" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1606046031983" />
-    <state width="1491" height="154" key="GridCell.Tab.0.right" timestamp="1606046031983">
+    <state width="1476" height="152" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1606211142146" />
+    <state width="1476" height="152" key="GridCell.Tab.0.right" timestamp="1606211142146">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1491" height="154" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1606046031983" />
+    <state width="1476" height="152" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1606211142146" />
     <state x="277" y="77" key="SettingsEditor" timestamp="1606040748437">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="277" y="77" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1606040748437" />
+    <state x="361" y="165" key="Vcs.Push.Dialog.v2" timestamp="1606211225128">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="361" y="165" key="Vcs.Push.Dialog.v2/0.0.1536.864@0.0.1536.864" timestamp="1606211225128" />
+    <state x="570" y="339" key="git4idea.remote.GitConfigureRemotesDialog" timestamp="1606211335732">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="570" y="339" key="git4idea.remote.GitConfigureRemotesDialog/0.0.1536.864@0.0.1536.864" timestamp="1606211335732" />
   </component>
 </project>

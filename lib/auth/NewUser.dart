@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widget/custom_dialog_box.dart';
-import 'LogInPage.dart';
-import 'SignUpPage.dart';
-
+import 'package:yibe_final_ui/services/navigation_service.dart';
 
 class FirstView extends StatelessWidget {
   final primaryColor = const Color(0xff12ACB1);
@@ -24,12 +21,12 @@ class FirstView extends StatelessWidget {
               children: <Widget>[
                 SizedBox(height: _height * 0.10),
                 Text(
-                  "Yibe Network",
+                  'Yibe Network',
                   style: TextStyle(fontSize: 40, color: Colors.white),
                 ),
                 SizedBox(height: _height * 0.10),
                 Text(
-                  "Begin your Yibe lifestyle",
+                  'Begin your Yibe lifestyle',
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -46,7 +43,7 @@ class FirstView extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         top: 10.0, bottom: 10.0, left: 20.0, right: 20.0),
                     child: Text(
-                      "Create new account",
+                      'Create new account',
                       style: TextStyle(
                         color: primaryColor,
                         fontSize: 24,
@@ -54,19 +51,15 @@ class FirstView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SignupPage()));
-                  },
+                  onPressed: ()=>NavigationService.instance.pushNamedTo('signUp'),
                 ),
                 SizedBox(height: _height * 0.05),
                 FlatButton(
                   child: Text(
-                    "Log In",
+                    'Log In',
                     style: TextStyle(color: Colors.white, fontSize: 25),
                   ),
-                  onPressed: () {Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LogInPage()));},
+                  onPressed: () => NavigationService.instance.pushNamedTo('logIn'),
                 )
               ],
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:yibe_final_ui/utils/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:yibe_final_ui/pages/PrivateFeeds.dart';
 import 'package:yibe_final_ui/pages/ProfFeeds.dart';
+import 'package:yibe_final_ui/services/navigation_service.dart';
 
 
 import 'College.dart';
@@ -21,11 +23,11 @@ class PageHandler extends StatefulWidget {
   _PageHandlerState createState() => _PageHandlerState();
 }
 
-class _PageHandlerState extends State<PageHandler>
-    with TickerProviderStateMixin {
+class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin {
   //var stream;
   // Properties & Variables needed
   int currentTab = 1; // to keep track of active tab index
+  Stream selectedStream;
   final List<Widget> screens = [
     //Home(),
     Consumer<AcType>(builder:(context,model,child) => model.isPrivate ? PrivateFeeds() :ProfFeeds()),
@@ -36,6 +38,15 @@ class _PageHandlerState extends State<PageHandler>
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen; // if user taOur first view in viewport
   bool showSheet = false;
+  Stream allCloseFriendFeeds;
+  Stream allFriendFeeds;
+  Stream allAcquaintanceFeeds;
+  Stream allPvtFollowingsFeeds;
+  Stream allPvtFeeds;
+  Stream allProfFeeds;
+  String selectedTitle = 'All';
+  //bool isActive = true;
+
 
   var height;
   bool pressed = false;
@@ -70,13 +81,33 @@ class _PageHandlerState extends State<PageHandler>
     //     .collection("Demo")
     //     .doc("Card Notification")
     //     .snapshots();
+
     currentScreen = College(
       //     hiberPopUp: _hyberPOPUP,
     ); // if user ta
     _fabHeight = _initFabHeight;
     super.initState();
     getUserInfoFromSP();
+
+  /*  Stream<QuerySnapshot> closeFriendFeeds = DatabaseService.instance.getAllCloseFriendsFeeds();
+    Stream<QuerySnapshot> friendsFeeds = DatabaseService.instance.getAllFriendsFeeds();
+    Stream<QuerySnapshot> acquaintanceFeeds = DatabaseService.instance.getAllAcquaintanceFeeds();
+    Stream<QuerySnapshot> followingsFeeds = DatabaseService.instance.getAllPvtFollowingsFeeds();
+    Stream<QuerySnapshot> CFFAQPvtFollowingsFeeds = DatabaseService.instance.getAllMyPvtFeeds();
+    Stream<QuerySnapshot> ProfFollowinsFeeds = DatabaseService.instance.getAllMyProfFeeds();
+    setState(() {
+      allCloseFriendFeeds= closeFriendFeeds;
+      allFriendFeeds = friendsFeeds;
+      allAcquaintanceFeeds = acquaintanceFeeds;
+      allPvtFollowingsFeeds = followingsFeeds;
+      allPvtFeeds = CFFAQPvtFollowingsFeeds;
+      allProfFeeds = ProfFollowinsFeeds;
+      selectedStream = allPvtFeeds;
+    });*/
   }
+
+
+
 
   // _hyberPOPUP(value) {
   //   setState(() {
@@ -424,30 +455,32 @@ class _PageHandlerState extends State<PageHandler>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      GestureDetector(
-                          onLongPress: () => _showContentFilter(),
-                          onTap: () {
-                            //    if (!_hyberActivated)
-                            setState(() {
-                              currentScreen = Consumer<AcType>(builder:(context,model,child) => model.isPrivate ? PrivateFeeds() :ProfFeeds());
-                              //Home(
-                              //   hiberPopUp: _hyberPOPUP,
-                              // if user taps on this dashboard tab will be active
-                              currentTab = 0;
-                            });
-                          },
-                          child: _hyberActivated
-                              ? SvgPicture.asset(
-                              "assets/images/hybernation_home.svg",
-                              height: 30,
-                              color: currentTab == 0
-                                  ? Color(0xFF0CB5BB)
-                                  : Colors.black)
-                              : currentTab == 0
-                              ? Icon(Icons.home,
-                              size: 30, color: Color(0xFF0CB5BB))
-                              : Icon(Icons.home_outlined,
-                              size: 30, color: Colors.black)),
+                      Consumer<AcType>(
+                        builder: (context, model,child) => GestureDetector(
+                            onLongPress: () { currentTab==0 ? model.isPrivate ? _showContentFilterSheet() : Container() : Container();},
+                            onTap: () {
+                              //    if (!_hyberActivated)
+                              setState(() {
+                                currentScreen = model.isPrivate ? PrivateFeeds(feedStream: selectedStream) : ProfFeeds(feedStream: allProfFeeds);
+                                //Home(
+                                //   hiberPopUp: _hyberPOPUP,
+                                // if user taps on this dashboard tab will be active
+                                currentTab = 0;
+                              });
+                            },
+                            child: _hyberActivated
+                                ? SvgPicture.asset(
+                                "assets/images/hybernation_home.svg",
+                                height: 30,
+                                color: currentTab == 0
+                                    ? Color(0xFF0CB5BB)
+                                    : Colors.black)
+                                : currentTab == 0
+                                ? Icon(Icons.home,
+                                size: 30, color: Color(0xFF0CB5BB))
+                                : Icon(Icons.home_outlined,
+                                size: 30, color: Colors.black)),
+                      ),
                       GestureDetector(
                           onTap: () {
                             //if (!_hyberActivated)
@@ -476,7 +509,7 @@ class _PageHandlerState extends State<PageHandler>
                           onTap: () {
                             // if (!_hyberActivated)
                             setState(() {
-                              currentScreen = Consumer<AcType>(builder:(context,model,child) => SearchUsers(didNavigatedFromPvtAc: model.isPrivate));; // if user taps on this dashboard tab will be active
+                              currentScreen = Consumer<AcType>(builder:(context,model,child) => SearchUsers(didNavigatedFromPvtAc: model.isPrivate));// if user taps on this dashboard tab will be active
                               currentTab = 2;
                             });
                           },
@@ -551,55 +584,6 @@ class _PageHandlerState extends State<PageHandler>
     );
   }
 
-  void _showContentFilter() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            color: Color(0xFF737373),
-            //height: 180,
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Container(
-                      width: 200,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    title: buildFilterSwitches('All', false),
-                  ),
-                  ListTile(
-                    title: buildFilterSwitches('Friends', false),
-                  ),
-                  ListTile(
-                    title: buildFilterSwitches('Close Friends', true),
-                  ),
-                  ListTile(
-                    title: buildFilterSwitches('Acquaintances', false),
-                  ),
-                  ListTile(
-                    title: buildFilterSwitches('Trending', true),
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).canvasColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(10),
-                  topRight: const Radius.circular(10),
-                ),
-              ),
-            ),
-          );
-        });
-  }
 
   Row buildFilterSwitches(String title, bool isActive) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -731,4 +715,176 @@ class _PageHandlerState extends State<PageHandler>
 // Color hexToColor(String code) {
 //   return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 // }
+  void _showContentFilterSheet() {
+    List title = ['All', 'Close Friends', 'Friends', 'Aquaintance', 'Following'];
+    bool CFSwitch = false;
+    bool FSwitch = false;
+    bool AQSwitch = false;
+    bool FollowingSwitch = false;
+    bool AllSwitch= true;
+
+    showModalBottomSheet<dynamic>(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Container(
+            color: Colors.grey,
+            child: Container(
+              child: Wrap(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: Container(
+                        width: 200,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(
+                        title[0],
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Transform.scale(
+                          scale: 0.7,
+                          child: CupertinoSwitch(
+                            activeColor: privatePrimary,
+                            value: AllSwitch,
+                            onChanged: (bool val) {
+                              setState(() {
+                                AllSwitch =! AllSwitch;
+                                CFSwitch = false;
+                                FSwitch = false;
+                                AQSwitch = false;
+                                FollowingSwitch = false;
+                                selectedTitle = title[0];
+                              });
+                            },
+                          ))
+                    ])
+                  ),
+                  Divider(height: 8),
+                  ListTile(
+                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(
+                        title[1],
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Transform.scale(
+                          scale: 0.7,
+                          child: CupertinoSwitch(
+                            activeColor: privatePrimary,
+                            value: CFSwitch,
+                            onChanged: (bool val) {
+                              setState(() {
+                                CFSwitch =! CFSwitch;
+                                FSwitch = false;
+                                AQSwitch = false;
+                                FollowingSwitch = false;
+                                AllSwitch = false;
+                                selectedTitle = title[1];
+                              });
+                            },
+                          ))
+                    ]),
+                  ),
+                  ListTile(
+                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(
+                        title[2],
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Transform.scale(
+                          scale: 0.7,
+                          child: CupertinoSwitch(
+                            activeColor: privatePrimary,
+                            value: FSwitch,
+                            onChanged: (bool val) {
+                              setState(() {
+                                FSwitch =! FSwitch;
+                                selectedTitle = title[2];
+                              });
+                            },
+                          ))
+                    ]),
+                  ),
+                  ListTile(
+                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(
+                        title[3],
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Transform.scale(
+                          scale: 0.7,
+                          child: CupertinoSwitch(
+                            activeColor: privatePrimary,
+                            value: AQSwitch,
+                            onChanged: (bool val) {
+                              setState(() {
+                                AQSwitch =! AQSwitch;
+                              });
+                            },
+                          ))
+                    ])
+                  ),
+                  ListTile(
+                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Text(
+                        title[4],
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      Transform.scale(
+                          scale: 0.7,
+                          child: CupertinoSwitch(
+                            activeColor: privatePrimary,
+                            value: FollowingSwitch,
+                            onChanged: (bool val) {
+                              setState(() {
+                                FollowingSwitch =! FollowingSwitch;
+                              });
+                            },
+                          ))
+                    ]),
+                  ),
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(10),
+                  topRight: const Radius.circular(10),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Row contentFilterSwitch(String title, bool isActive) {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(
+        title,
+        style: TextStyle(fontSize: 16.0),
+      ),
+      Transform.scale(
+          scale: 0.7,
+          child: CupertinoSwitch(
+            activeColor: privatePrimary,
+            value: isActive,
+            onChanged: (bool val) {
+              setState(() {
+                isActive = val;
+              });
+            },
+          ))
+    ]);
+  }
 }
+
+

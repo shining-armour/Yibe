@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+ const privatePrimary = Color(0xFF0CB5BB);
+ const privateSecondary = Color(0xFF157F83);
+ const  publicPrimary = Color(0xFF7280FF);
+ const publicSecondary = Color(0xFF424283);
+
   const primaryColor = Color(0xff12ACB1);
   const yellow = Colors.amber;
   const grey = Colors.grey;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yibe_final_ui/utils/helper_functions.dart';
 
 class CustomDialog extends StatelessWidget {
   final String title,
@@ -80,9 +81,10 @@ class CustomDialog extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
+                    print('primary button pressed');
                     Navigator.of(context).pop();
-                    Navigator.of(context)
-                        .pushReplacementNamed(primaryButtonRoute);
+                    Navigator.of(context).pushReplacementNamed(primaryButtonRoute);
+                    HelperFunction.saveHibernationModeAsSharedPreference(true);
                   },
                 ),
                 SizedBox(height: 10.0),
@@ -108,6 +110,7 @@ class CustomDialog extends StatelessWidget {
           ),
         ),
         onPressed: () {
+          print('secondary button');
           Navigator.of(context).pop();
           Navigator.of(context).pushReplacementNamed(secondaryButtonRoute);
         },

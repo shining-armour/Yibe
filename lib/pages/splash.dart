@@ -18,16 +18,16 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SvgPicture.asset("assets/images/White_Logo.svg"),
-          SizedBox(
-            height: 10,
-          ),
-          SvgPicture.asset("assets/images/White_Name.svg"),
-        ],
-      )),
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SvgPicture.asset("assets/images/White_Logo.svg"),
+              SizedBox(
+                height: 10,
+              ),
+              SvgPicture.asset("assets/images/White_Name.svg"),
+            ],
+          )),
       backgroundColor: Color(0xFFFD8F6E),
     );
   }
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
             nextScreen: AnimatedSplashScreen(
                 duration: 150,
                 splash:
-                    SvgPicture.asset('assets/images/splash_screen_green.svg'),
+                SvgPicture.asset('assets/images/splash_screen_green.svg'),
                 nextScreen: StreamProvider<UserDetails>.value(
                     value: AuthService().user, child: Wrapper()),
                 splashTransition: SplashTransition.fadeTransition,

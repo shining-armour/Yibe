@@ -63,7 +63,7 @@ class _ProfessionalNotificationState extends State<ProfessionalNotification> {
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(notifications[i].data()['profileUrl']),
                           ),
-                        /* trailing: (notifications[i].data()['postUrl']==null) ? ConstrainedBox(
+                        trailing: notifications[i].data()['postUrl']!=null ? ConstrainedBox(
                             constraints: BoxConstraints(
                               minWidth: 40,
                               minHeight: 40,
@@ -71,7 +71,7 @@ class _ProfessionalNotificationState extends State<ProfessionalNotification> {
                               maxHeight: 50,
                             ),
                             child: Image.network(notifications[i].data()['postUrl'], fit: BoxFit.cover),
-                          ) : Text('')*/
+                          ) : null,
                       ),
                     ),
                     Divider(

@@ -13,7 +13,10 @@ import 'package:yibe_final_ui/pages/splash.dart';
 import 'package:yibe_final_ui/services/navigation_service.dart';
 import 'package:yibe_final_ui/pages/EditPrivateProfile.dart';
 import 'package:yibe_final_ui/pages/EditProfProfile.dart';
-import 'package:yibe_final_ui/pages/Conversation.dart';
+import 'package:yibe_final_ui/pages/Hybernation.dart';
+import 'package:yibe_final_ui/pages/College.dart';
+import 'package:yibe_final_ui/pages/PrivateFeeds.dart';
+import 'package:yibe_final_ui/pages/ProfFeeds.dart';
 
 
 Future<void> main() async {
@@ -45,6 +48,10 @@ class MyApp extends StatelessWidget {
           'setUpProfAc' :(context)=>SetUpProfessionalAccount(),
           'editPrivate':(context)=>EditPrivateProfile(),
           'editProfessional':(context)=>EditProfProfile(),
+          'hybernation': (BuildContext context) => Hybernation(),
+          'college':(context) => College(),
+          'privateFeeds':(context)=>PrivateFeeds(),
+          'profFeeds':(context)=>ProfFeeds(),
 
           //home: SplashScreen(),
           //onGenerateRoute: (routeSettings) {

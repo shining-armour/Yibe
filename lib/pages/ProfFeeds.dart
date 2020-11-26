@@ -9,8 +9,11 @@ import 'package:yibe_final_ui/pages/comments.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:yibe_final_ui/pages/Message.dart';
 import 'package:yibe_final_ui/pages/Notification.dart';
+import 'package:yibe_final_ui/widget/custom_dialog_box.dart';
 
 class ProfFeeds extends StatefulWidget {
+  Stream feedStream;
+  ProfFeeds({this.feedStream});
 
   @override
   _ProfFeedsState createState() => _ProfFeedsState();
@@ -62,7 +65,17 @@ class _ProfFeedsState extends State<ProfFeeds> {
                     Spacer(),
                     GestureDetector(
                       onLongPress: () {
-                        //widget.hiberPopUp(true);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => CustomDialog(
+                            title: "Hibernation Mode",
+                            description:  "Only selected messages will be accessable. Other features of the application cannot be used during hibernation",
+                            primaryButtonText: "Activate",
+                            primaryButtonRoute: "hybernation",
+                            secondaryButtonText: "Cancel",
+                            secondaryButtonRoute: "pageHandler",
+                          ),
+                        );
                       },
                       onTap: () {
                         Navigator.push(context,

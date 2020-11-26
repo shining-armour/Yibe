@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:yibe_final_ui/services/database.dart';
+import 'package:yibe_final_ui/pages/viewOtherUserPvtProfile.dart';
+import 'package:yibe_final_ui/services/navigation_service.dart';
+import 'package:yibe_final_ui/utils/constants.dart';
 
 class Connections extends StatefulWidget {
 
@@ -37,13 +40,26 @@ class _ConnectionsState extends State<Connections> {
                 itemBuilder: (context, i) {
                   return Column(
                     children: [
-                      ListTile(
-                        title: Text(users[i].data()['fullname']),
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              users[i].data()['profileUrl']),   //TODO: Change with updated profile pic
+                      GestureDetector(
+                        onTap: (){
+                          DatabaseService.instance.getAnyPvtUserInfo(users[i].data()['uid']).then((value) => {
+                            NavigationService.instance.pushTo( MaterialPageRoute(builder: (context) => ViewOtherUserPvtProfile(
+                              otherUserUid: value['pvtId'],
+                              otherUserFullName: value['fullname'],
+                              otherUserProfile: value['privateUrl'] ?? UniversalVariables.defaultImageUrl,
+                              otherUserBio: value['pvtBio'] ?? 'Bio is Empty',
+                              otherUserName: value['username'],
+                            )))
+                          });
+                       },
+                        child: ListTile(
+                          title: Text(users[i].data()['fullname']),
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                users[i].data()['profileUrl']),   //TODO: Change with updated profile pic
+                          ),
+                          trailing: Text(users[i].data()['myRelation']),
                         ),
-                        trailing: Text(users[i].data()['myRelation']),
                       ),
                       Divider(
                         height: 10.0,

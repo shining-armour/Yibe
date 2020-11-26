@@ -57,6 +57,16 @@ class DatabaseService {
       print(e);
     }
   }
+  
+  Future<Map> getAnyPvtUserInfo(String pvtId) async{
+    DocumentSnapshot doc = await _db.collection(_userCollection).doc(pvtId).get();
+    return doc.data();
+  }
+
+  Future<Map> getAnyProfUserInfo(String profId) async{
+    QuerySnapshot query = await _db.collection(_allUserCollection).where('profId', isEqualTo: profId).get();
+    return query.docs[0].data();
+  }
 
   Future<String> getPvtProfileUrlofAUser(String chattingWithId) async{
     try{

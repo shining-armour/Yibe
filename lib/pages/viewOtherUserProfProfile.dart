@@ -348,7 +348,7 @@ class _ViewOtherUserProfProfileState extends State<ViewOtherUserProfProfile> {
                             },
                           ),
                           Spacer(),
-                          GestureDetector(
+                          InkWell(
                             onTap: () {
                               widget.navigatedFromPrivateAc
                                   ? DatabaseService.instance

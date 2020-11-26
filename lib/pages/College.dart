@@ -10,6 +10,8 @@ import 'package:yibe_final_ui/pages/college_section_page.dart';
 import 'package:yibe_final_ui/services/database.dart';
 import 'package:yibe_final_ui/utils/constants.dart';
 import 'Preferences.dart';
+import 'package:yibe_final_ui/widget/custom_dialog_box.dart';
+import 'package:yibe_final_ui/utils/helper_functions.dart';
 
 class College extends StatefulWidget {
   static final routeName = "/College";
@@ -22,6 +24,8 @@ class College extends StatefulWidget {
 
 class _CollegeState extends State<College> {
   int _currentIndex = 1;
+  bool isHibernation;
+
   Map profUserMap;
   List<String> cardList = [
     'assets/images/poster1.png',
@@ -44,11 +48,21 @@ class _CollegeState extends State<College> {
 
   @override
   void initState(){
+   // getUserInfoFromSP();
     super.initState();
     DatabaseService.instance.getProfCurrentUserInfo().then((value) => setState(() {
       profUserMap = value;
     }));
+
   }
+
+ /* void getUserInfoFromSP() {
+    HelperFunction.getUserProfUidSharedPreference().then((value) =>
+        setState(() {
+          UniversalVariables.myProfUid = value;
+          print('prof uid : '+ UniversalVariables.myProfUid + ' in pvt home page');
+   }));
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +106,18 @@ class _CollegeState extends State<College> {
                     Spacer(),
                     GestureDetector(
                         onLongPress: () {
-                          widget.hiberPopUp(true);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => CustomDialog(
+                              title: "Hibernation Mode",
+                              description:
+                              "Only selected messages will be accessable. Other features of the application cannot be used during hibernation",
+                              primaryButtonText: "Activate",
+                              primaryButtonRoute: "hybernation",
+                              secondaryButtonText: "Cancel",
+                              secondaryButtonRoute: "pageHandler",
+                            ),
+                          );
                         },
                         onTap: () {
                           Navigator.push(context,

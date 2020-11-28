@@ -8,6 +8,7 @@ import 'package:yibe_final_ui/services/database.dart';
 import 'package:yibe_final_ui/services/navigation_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:yibe_final_ui/model/message.dart';
+import 'package:yibe_final_ui/services/messaging_service.dart';
 
 final Color privatePrimary = Color(0xFF0CB5BB);
 final Color privateSecondary = Color(0xFF157F83);
@@ -44,6 +45,7 @@ class _HybernationState extends State<Hybernation> {
   void initState() {
     super.initState();
    getSelectiveConversations();
+    MessagingService.instance.sendNotification();
   }
 
   void getSelectiveConversations(){
@@ -522,41 +524,47 @@ class ConversationSnippetTile extends StatefulWidget {
 class _ConversationSnippetTileState extends State<ConversationSnippetTile> {
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () {
-        widget.snippet.acType=='Private' ?
-        NavigationService.instance.pushTo(MaterialPageRoute(
-            builder: (context) => ConversationPage(
-              navigatedFromPrivateAc: true,
-              otherUserFullName: widget.snippet.fullname,
-              otherUserName: widget.snippet.username,
-              otherUserProfileUrl: widget.url,
-              otherUserUid: widget.snippet.chattingWithId,
-              chatRoomId: widget.snippet.chatRoomId,
-              typeOfConversation: widget.snippet.typeOfConversation,
-            ))) :
-        NavigationService.instance.pushTo(MaterialPageRoute(
-            builder: (context) => ConversationPage(
-              navigatedFromPrivateAc: false,
-              otherUserFullName: widget.snippet.fullname,
-              otherUserName: widget.snippet.username,
-              otherUserProfileUrl: widget.url,
-              otherUserUid: widget.snippet.chattingWithId,
-              chatRoomId: widget.snippet.chatRoomId,
-              typeOfConversation: widget.snippet.typeOfConversation,
-            )));
-
+    return Dismissible(
+      key: Key(widget.snippet.chattingWithId),
+      onDismissed: (direction){
+        widget.snippet.acType=='Private' ? DatabaseService.instance.removeThisPvtChatFromSelective(widget.snippet.chattingWithId) : DatabaseService.instance.removeThisProfChatFromSelective(widget.snippet.chattingWithId);
       },
-      title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(widget.snippet.fullname),
-            Text(timeago.format(DateTime.tryParse(
-                widget.snippet.timestamp.toDate().toString()))
-                .toString()), ]),
-      subtitle: Text(widget.snippet.type == MessageType.Text ? widget.snippet.lastMessage.length > 35 ? widget.snippet.lastMessage.substring(0,35)+'...' : widget.snippet.lastMessage : 'Attachment: Image'),
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(widget.url),
+      child: ListTile(
+        onTap: () {
+          widget.snippet.acType=='Private' ?
+          NavigationService.instance.pushTo(MaterialPageRoute(
+              builder: (context) => ConversationPage(
+                navigatedFromPrivateAc: true,
+                otherUserFullName: widget.snippet.fullname,
+                otherUserName: widget.snippet.username,
+                otherUserProfileUrl: widget.url,
+                otherUserUid: widget.snippet.chattingWithId,
+                chatRoomId: widget.snippet.chatRoomId,
+                typeOfConversation: widget.snippet.typeOfConversation,
+              ))) :
+          NavigationService.instance.pushTo(MaterialPageRoute(
+              builder: (context) => ConversationPage(
+                navigatedFromPrivateAc: false,
+                otherUserFullName: widget.snippet.fullname,
+                otherUserName: widget.snippet.username,
+                otherUserProfileUrl: widget.url,
+                otherUserUid: widget.snippet.chattingWithId,
+                chatRoomId: widget.snippet.chatRoomId,
+                typeOfConversation: widget.snippet.typeOfConversation,
+              )));
+
+        },
+        title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.snippet.fullname),
+              Text(timeago.format(DateTime.tryParse(
+                  widget.snippet.timestamp.toDate().toString()))
+                  .toString()), ]),
+        subtitle: Text(widget.snippet.type == MessageType.Text ? widget.snippet.lastMessage.length > 35 ? widget.snippet.lastMessage.substring(0,35)+'...' : widget.snippet.lastMessage : 'Attachment: Image'),
+        leading: CircleAvatar(
+          backgroundImage: NetworkImage(widget.url),
+        ),
       ),
     );
   }

@@ -192,7 +192,7 @@ class _CommentState extends State<Comment> {
                             }
                           });
                         },
-                        child: isliked
+                        child: widget.likeCount =='1'
                             ? Icon(
                                 Icons.favorite,
                                 color: Colors.red,

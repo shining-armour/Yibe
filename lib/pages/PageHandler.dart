@@ -13,44 +13,39 @@ import 'package:yibe_final_ui/utils/helper_functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:yibe_final_ui/pages/PrivateFeeds.dart';
 import 'package:yibe_final_ui/pages/ProfFeeds.dart';
-import 'package:yibe_final_ui/services/navigation_service.dart';
-
-
+import 'package:yibe_final_ui/services/messaging_service.dart';
 import 'College.dart';
 
+
 class PageHandler extends StatefulWidget {
+
   @override
   _PageHandlerState createState() => _PageHandlerState();
 }
 
 class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin {
-  //var stream;
-  // Properties & Variables needed
   int currentTab = 1; // to keep track of active tab index
-  Stream selectedStream;
+  bool CFSwitch = false;
+  bool FSwitch = false;
+  bool AQSwitch = false;
+  bool FollowingSwitch = false;
+  bool AllSwitch = true;
+
   final List<Widget> screens = [
     //Home(),
-    Consumer<AcType>(builder:(context,model,child) => model.isPrivate ? PrivateFeeds() :ProfFeeds()),
-    Consumer<AcType>(builder:(context,model,child) => College(didNavigatedFromPvtAc:model.isPrivate)),
+    Consumer<AcType>(builder: (context, model, child) => model.isPrivate ? PrivateFeeds() : ProfFeeds()),
+    Consumer<AcType>(builder: (context, model, child) => College(didNavigatedFromPvtAc: model.isPrivate)),
     Profile(navigatedFromSetUpProfAc: false),
-    Consumer<AcType>(builder:(context,model,child) => SearchUsers(didNavigatedFromPvtAc:model.isPrivate))
+    Consumer<AcType>(builder: (context, model, child) => SearchUsers(didNavigatedFromPvtAc: model.isPrivate))
   ]; // to store nested tabs
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen; // if user taOur first view in viewport
-  bool showSheet = false;
-  Stream allCloseFriendFeeds;
-  Stream allFriendFeeds;
-  Stream allAcquaintanceFeeds;
-  Stream allPvtFollowingsFeeds;
-  Stream allPvtFeeds;
-  Stream allProfFeeds;
-  String selectedTitle = 'All';
-  //bool isActive = true;
 
 
   var height;
   bool pressed = false;
   double i = 0;
+
   // bool _isVisibale = true;
 
   final double _initFabHeight = 120.0;
@@ -88,26 +83,8 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
     _fabHeight = _initFabHeight;
     super.initState();
     getUserInfoFromSP();
-
-  /*  Stream<QuerySnapshot> closeFriendFeeds = DatabaseService.instance.getAllCloseFriendsFeeds();
-    Stream<QuerySnapshot> friendsFeeds = DatabaseService.instance.getAllFriendsFeeds();
-    Stream<QuerySnapshot> acquaintanceFeeds = DatabaseService.instance.getAllAcquaintanceFeeds();
-    Stream<QuerySnapshot> followingsFeeds = DatabaseService.instance.getAllPvtFollowingsFeeds();
-    Stream<QuerySnapshot> CFFAQPvtFollowingsFeeds = DatabaseService.instance.getAllMyPvtFeeds();
-    Stream<QuerySnapshot> ProfFollowinsFeeds = DatabaseService.instance.getAllMyProfFeeds();
-    setState(() {
-      allCloseFriendFeeds= closeFriendFeeds;
-      allFriendFeeds = friendsFeeds;
-      allAcquaintanceFeeds = acquaintanceFeeds;
-      allPvtFollowingsFeeds = followingsFeeds;
-      allPvtFeeds = CFFAQPvtFollowingsFeeds;
-      allProfFeeds = ProfFollowinsFeeds;
-      selectedStream = allPvtFeeds;
-    });*/
+    MessagingService.instance.sendNotification();
   }
-
-
-
 
   // _hyberPOPUP(value) {
   //   setState(() {
@@ -324,26 +301,35 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
   }
 
   void getUserInfoFromSP() {
-    HelperFunction.getUserPvtUidSharedPreference().then((value) => setState(() {
-      UniversalVariables.myPvtUid = value;
-      print('User Id : '+ UniversalVariables.myPvtUid + ' in pvt home page');
-    }));
-    HelperFunction.getUserNameSharedPreference().then((value) => setState(() {
-      UniversalVariables.myPvtUsername = value;
-      print('username : '+ UniversalVariables.myPvtUsername +' in pvt home page');
-    }));
-    HelperFunction.getUserEmailIdSharedPreference().then((value) => setState(() {
-      UniversalVariables.myEmail = value;
-      print('emailId : '+ UniversalVariables.myEmail + ' in pvt home page');
-    }));
-    HelperFunction.getFullNameSharedPreference().then((value) => setState(() {
-      UniversalVariables.myPvtFullName = value;
-      print('Fullname : '+ UniversalVariables.myPvtFullName + ' in pvt home page');
-    }));
+    HelperFunction.getUserPvtUidSharedPreference().then((value) =>
+        setState(() {
+          UniversalVariables.myPvtUid = value;
+          print(
+              'User Id : ' + UniversalVariables.myPvtUid + ' in pvt home page');
+        }));
+    HelperFunction.getUserNameSharedPreference().then((value) =>
+        setState(() {
+          UniversalVariables.myPvtUsername = value;
+          print('username : ' + UniversalVariables.myPvtUsername +
+              ' in pvt home page');
+        }));
+    HelperFunction.getUserEmailIdSharedPreference().then((value) =>
+        setState(() {
+          UniversalVariables.myEmail = value;
+          print(
+              'emailId : ' + UniversalVariables.myEmail + ' in pvt home page');
+        }));
+    HelperFunction.getFullNameSharedPreference().then((value) =>
+        setState(() {
+          UniversalVariables.myPvtFullName = value;
+          print('Fullname : ' + UniversalVariables.myPvtFullName +
+              ' in pvt home page');
+        }));
     HelperFunction.getUserProfUidSharedPreference().then((value) =>
         setState(() {
           UniversalVariables.myProfUid = value;
-          print('prof uid : '+ UniversalVariables.myProfUid + ' in pvt home page');
+          print('prof uid : ' + UniversalVariables.myProfUid +
+              ' in pvt home page');
         }));
   }
 
@@ -361,7 +347,10 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
       child: Container(
         color: Colors.white,
         alignment: Alignment.center,
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         child: Column(
           children: [
             Divider(
@@ -384,7 +373,10 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    _panelHeightOpen = MediaQuery.of(context).size.height * .95;
+    _panelHeightOpen = MediaQuery
+        .of(context)
+        .size
+        .height * .95;
     return Scaffold(
       body: Stack(
         children: [
@@ -425,7 +417,10 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
                 child: Container(
                   alignment: Alignment.center,
                   height: 50,
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -456,36 +451,69 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Consumer<AcType>(
-                        builder: (context, model,child) => GestureDetector(
-                            onLongPress: () { currentTab==0 ? model.isPrivate ? _showContentFilterSheet() : Container() : Container();},
-                            onTap: () {
-                              //    if (!_hyberActivated)
-                              setState(() {
-                                currentScreen = model.isPrivate ? PrivateFeeds(feedStream: selectedStream) : ProfFeeds(feedStream: allProfFeeds);
-                                //Home(
-                                //   hiberPopUp: _hyberPOPUP,
-                                // if user taps on this dashboard tab will be active
-                                currentTab = 0;
-                              });
-                            },
-                            child: _hyberActivated
-                                ? SvgPicture.asset(
-                                "assets/images/hybernation_home.svg",
-                                height: 30,
-                                color: currentTab == 0
-                                    ? Color(0xFF0CB5BB)
-                                    : Colors.black)
-                                : currentTab == 0
-                                ? Icon(Icons.home,
-                                size: 30, color: Color(0xFF0CB5BB))
-                                : Icon(Icons.home_outlined,
-                                size: 30, color: Colors.black)),
+                        builder: (context, model, child) =>
+                            GestureDetector(
+                                onLongPress: () {
+                                  currentTab == 0 ? model.isPrivate
+                                      ? showModalBottomSheet<void>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return BottomSheetSwitch(
+                                        CFSwitch: CFSwitch,
+                                        FSwitch: FSwitch,
+                                        AQSwitch: AQSwitch,
+                                        AllSwitch: AllSwitch,
+                                        FollowingSwitch: FollowingSwitch,
+                                        valueChangedOfCFSwitch: (value){
+                                          CFSwitch = value;
+                                        },
+                                        valueChangedOfFSwitch: (value){
+                                          FSwitch = value;
+                                        },
+                                        valueChangedOfAQSwitch: (value){
+                                          AQSwitch = value;
+                                        },
+                                        valueChangedOfAllSwitch: (value){
+                                          AllSwitch = value;
+                                        },
+                                        valueChangedOfFollowingSwitch: (value){
+                                          FollowingSwitch = value;
+                                        },
+                                      );
+                                    },
+                                  ) : Container() : Container();
+                                },
+                                onTap: () {
+                                  //    if (!_hyberActivated)
+                                  setState(() {
+                                    currentScreen =
+                                    model.isPrivate ? Consumer<AcType> (builder: (context, model, child) =>  PrivateFeeds(feedOf: model.selectedOption,feedStream: model.selectedStream)) : ProfFeeds();
+                                    //Home(
+                                    //   hiberPopUp: _hyberPOPUP,
+                                    // if user taps on this dashboard tab will be active
+                                    currentTab = 0;
+                                  });
+                                },
+                                child: _hyberActivated
+                                    ? SvgPicture.asset(
+                                    "assets/images/hybernation_home.svg",
+                                    height: 30,
+                                    color: currentTab == 0
+                                        ? Color(0xFF0CB5BB)
+                                        : Colors.black)
+                                    : currentTab == 0
+                                    ? Icon(Icons.home,
+                                    size: 30, color: Color(0xFF0CB5BB))
+                                    : Icon(Icons.home_outlined,
+                                    size: 30, color: Colors.black)),
                       ),
                       GestureDetector(
                           onTap: () {
                             //if (!_hyberActivated)
                             setState(() {
-                              currentScreen = Consumer<AcType>(builder:(context,model,child) => College(didNavigatedFromPvtAc: model.isPrivate));
+                              currentScreen = Consumer<AcType>(
+                                  builder: (context, model, child) =>
+                                      College(didNavigatedFromPvtAc: model.isPrivate));
                               //College(
                               //      hiberPopUp: _hyberPOPUP,
                               // ); // if user taps on this dashboard tab will be active
@@ -509,7 +537,9 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
                           onTap: () {
                             // if (!_hyberActivated)
                             setState(() {
-                              currentScreen = Consumer<AcType>(builder:(context,model,child) => SearchUsers(didNavigatedFromPvtAc: model.isPrivate));// if user taps on this dashboard tab will be active
+                              currentScreen = Consumer<AcType>(
+                                  builder: (context, model, child) =>
+                                      SearchUsers(didNavigatedFromPvtAc: model.isPrivate)); // if user taps on this dashboard tab will be active
                               currentTab = 2;
                             });
                           },
@@ -585,26 +615,6 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
   }
 
 
-  Row buildFilterSwitches(String title, bool isActive) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(
-        title,
-        style: TextStyle(fontSize: 16.0),
-      ),
-      Transform.scale(
-          scale: 0.7,
-          child: CupertinoSwitch(
-            activeColor: Color(0xff12ACB1),
-            value: isActive,
-            onChanged: (bool val) {
-              setState(() {
-                isActive = val;
-              });
-            },
-          ))
-    ]);
-  }
-
   // _notification(type) {
   //   switch (type) {
   //     case 0:
@@ -644,30 +654,34 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
       minHeight: _panelHeightClosed,
       controller: _pc,
       //   minHeight: 230,
-      onPanelSlide: (double pos) => setState(() {
-        _fabHeight =
-            pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
-        _oldHeight = _newHeight;
-        _newHeight = _fabHeight;
-        if (_fabHeight > (MediaQuery.of(context).size.height * .95) / 2) {
-          if (_newHeight < _oldHeight) {
-            setState(() {
-              _panelHeightClosed = 0.0;
-            });
-            _pc.close().then((value) {
-              // _pc.hide();
+      onPanelSlide: (double pos) =>
+          setState(() {
+            _fabHeight =
+                pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
+            _oldHeight = _newHeight;
+            _newHeight = _fabHeight;
+            if (_fabHeight > (MediaQuery
+                .of(context)
+                .size
+                .height * .95) / 2) {
+              if (_newHeight < _oldHeight) {
+                setState(() {
+                  _panelHeightClosed = 0.0;
+                });
+                _pc.close().then((value) {
+                  // _pc.hide();
 
-              setState(() {
-                _panelHeightClosed = 230.0;
-                _newHeight = 230;
-                _oldHeight = 230;
-                pressed = false;
-              });
-            });
-          }
-        }
-        print(_fabHeight);
-      }),
+                  setState(() {
+                    _panelHeightClosed = 230.0;
+                    _newHeight = 230;
+                    _oldHeight = 230;
+                    pressed = false;
+                  });
+                });
+              }
+            }
+            print(_fabHeight);
+          }),
 
       panel: currentTab == 1 ? _clgpanel() : _homepanel(),
 
@@ -715,176 +729,200 @@ class _PageHandlerState extends State<PageHandler> with TickerProviderStateMixin
 // Color hexToColor(String code) {
 //   return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 // }
-  void _showContentFilterSheet() {
-    List title = ['All', 'Close Friends', 'Friends', 'Aquaintance', 'Following'];
-    bool CFSwitch = false;
-    bool FSwitch = false;
-    bool AQSwitch = false;
-    bool FollowingSwitch = false;
-    bool AllSwitch= true;
 
-    showModalBottomSheet<dynamic>(
-        isScrollControlled: true,
-        context: context,
-        builder: (context) {
-          return Container(
-            color: Colors.grey,
-            child: Container(
-              child: Wrap(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(
-                      child: Container(
-                        width: 200,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
+}
+
+class BottomSheetSwitch extends StatefulWidget {
+  final bool CFSwitch;
+  final bool FSwitch;
+  final bool AQSwitch;
+  final bool FollowingSwitch;
+  final bool AllSwitch;
+
+  BottomSheetSwitch({this.CFSwitch, this.FSwitch, this.AQSwitch, this.FollowingSwitch, this.AllSwitch, this.valueChangedOfCFSwitch, this.valueChangedOfFSwitch, this.valueChangedOfAQSwitch, this.valueChangedOfAllSwitch, this.valueChangedOfFollowingSwitch});
+
+  final ValueChanged valueChangedOfCFSwitch;
+  final ValueChanged valueChangedOfFSwitch;
+  final ValueChanged valueChangedOfAQSwitch;
+  final ValueChanged valueChangedOfFollowingSwitch;
+  final ValueChanged valueChangedOfAllSwitch;
+
+  @override
+  _BottomSheetSwitch createState() => _BottomSheetSwitch();
+}
+
+class _BottomSheetSwitch extends State<BottomSheetSwitch> {
+  bool CFSwitch;
+  bool FSwitch;
+  bool AQSwitch;
+  bool FollowingSwitch;
+  bool AllSwitch;
+
+  @override
+  void initState() {
+    CFSwitch = widget.CFSwitch;
+    FSwitch = widget.FSwitch;
+    AQSwitch = widget.AQSwitch;
+    FollowingSwitch = widget.FollowingSwitch;
+    AllSwitch = widget.AllSwitch;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AcType>(
+      builder: (context, model, child) =>
+          Container(
+        color: Colors.grey,
+        child: Container(
+          child: Wrap(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(
+                  child: Container(
+                    width: 200,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  ListTile(
-                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(
-                        title[0],
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      Transform.scale(
-                          scale: 0.7,
-                          child: CupertinoSwitch(
-                            activeColor: privatePrimary,
-                            value: AllSwitch,
-                            onChanged: (bool val) {
-                              setState(() {
-                                AllSwitch =! AllSwitch;
-                                CFSwitch = false;
-                                FSwitch = false;
-                                AQSwitch = false;
-                                FollowingSwitch = false;
-                                selectedTitle = title[0];
-                              });
-                            },
-                          ))
-                    ])
-                  ),
-                  Divider(height: 8),
-                  ListTile(
-                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(
-                        title[1],
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      Transform.scale(
-                          scale: 0.7,
-                          child: CupertinoSwitch(
-                            activeColor: privatePrimary,
-                            value: CFSwitch,
-                            onChanged: (bool val) {
-                              setState(() {
-                                CFSwitch =! CFSwitch;
-                                FSwitch = false;
-                                AQSwitch = false;
-                                FollowingSwitch = false;
-                                AllSwitch = false;
-                                selectedTitle = title[1];
-                              });
-                            },
-                          ))
-                    ]),
-                  ),
-                  ListTile(
-                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(
-                        title[2],
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      Transform.scale(
-                          scale: 0.7,
-                          child: CupertinoSwitch(
-                            activeColor: privatePrimary,
-                            value: FSwitch,
-                            onChanged: (bool val) {
-                              setState(() {
-                                FSwitch =! FSwitch;
-                                selectedTitle = title[2];
-                              });
-                            },
-                          ))
-                    ]),
-                  ),
-                  ListTile(
-                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(
-                        title[3],
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      Transform.scale(
-                          scale: 0.7,
-                          child: CupertinoSwitch(
-                            activeColor: privatePrimary,
-                            value: AQSwitch,
-                            onChanged: (bool val) {
-                              setState(() {
-                                AQSwitch =! AQSwitch;
-                              });
-                            },
-                          ))
-                    ])
-                  ),
-                  ListTile(
-                    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Text(
-                        title[4],
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      Transform.scale(
-                          scale: 0.7,
-                          child: CupertinoSwitch(
-                            activeColor: privatePrimary,
-                            value: FollowingSwitch,
-                            onChanged: (bool val) {
-                              setState(() {
-                                FollowingSwitch =! FollowingSwitch;
-                              });
-                            },
-                          ))
-                    ]),
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).canvasColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(10),
-                  topRight: const Radius.circular(10),
                 ),
               ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(
+                  'All',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                Transform.scale(
+                    scale: 0.7,
+                    child: CupertinoSwitch(
+                      activeColor: privatePrimary,
+                      value: AllSwitch,
+                      onChanged: (bool val) {
+                        setState(() {
+                          AllSwitch = true;
+                          CFSwitch = false;
+                          FSwitch = false;
+                          AQSwitch = false;
+                          FollowingSwitch = false;
+                        });
+                        model.changeShowFeedsOf('All');
+                        //NavigationService.instance.goBack();
+                      },
+                    ))
+              ]),
+              Divider(height: 8),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(
+                  'Close Friends',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                Transform.scale(
+                    scale: 0.7,
+                    child: CupertinoSwitch(
+                      activeColor: privatePrimary,
+                      value: CFSwitch,
+                      onChanged: (bool val) {
+                        setState(() {
+                          CFSwitch = true;
+                          FSwitch = false;
+                          AQSwitch = false;
+                          FollowingSwitch = false;
+                          AllSwitch = false;
+                        });
+                        model.changeShowFeedsOf('CF');
+                        //NavigationService.instance.goBack();
+                      },
+                    ))
+              ]),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(
+                  'Friends',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                Transform.scale(
+                    scale: 0.7,
+                    child: CupertinoSwitch(
+                      activeColor: privatePrimary,
+                      value: FSwitch,
+                      onChanged: (bool val) {
+                        setState(() {
+                          FSwitch = true;
+                          CFSwitch = false;
+                          AQSwitch = false;
+                          FollowingSwitch = false;
+                          AllSwitch = false;
+                        });
+                        model.changeShowFeedsOf('F');
+                       //NavigationService.instance.goBack();
+                      },
+                    ))
+              ]),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(
+                  'Acquaintance',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                Transform.scale(
+                    scale: 0.7,
+                    child: CupertinoSwitch(
+                      activeColor: privatePrimary,
+                      value: AQSwitch,
+                      onChanged: (bool val) {
+                        setState(() {
+                          AllSwitch = false;
+                          CFSwitch = false;
+                          FSwitch = false;
+                          AQSwitch = true;
+                          FollowingSwitch = false;
+                        });
+                        model.changeShowFeedsOf('AQ');
+                        //NavigationService.instance.goBack();
+                      },
+                    ))
+              ]),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(
+                  'Following',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                Transform.scale(
+                    scale: 0.7,
+                    child: CupertinoSwitch(
+                      activeColor: privatePrimary,
+                      value: FollowingSwitch,
+                      onChanged: (bool val) {
+                        setState(() {
+                          AllSwitch = false;
+                          CFSwitch = false;
+                          FSwitch = false;
+                          AQSwitch = false;
+                          FollowingSwitch = true;
+                        });
+                        model.changeShowFeedsOf('Following');
+                        //NavigationService.instance.goBack();
+                      },
+                    ))
+              ]),
+            ],
+          ),
+          decoration: BoxDecoration(
+            color: Theme
+                .of(context)
+                .canvasColor,
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(10),
+              topRight: const Radius.circular(10),
             ),
-          );
-        });
+          ),
+        ),
+      ),
+    );
   }
 
-  Row contentFilterSwitch(String title, bool isActive) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(
-        title,
-        style: TextStyle(fontSize: 16.0),
-      ),
-      Transform.scale(
-          scale: 0.7,
-          child: CupertinoSwitch(
-            activeColor: privatePrimary,
-            value: isActive,
-            onChanged: (bool val) {
-              setState(() {
-                isActive = val;
-              });
-            },
-          ))
-    ]);
-  }
 }
+
 
 

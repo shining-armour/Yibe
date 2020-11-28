@@ -12,8 +12,9 @@ import 'package:yibe_final_ui/pages/Notification.dart';
 import 'package:yibe_final_ui/widget/custom_dialog_box.dart';
 
 class PrivateFeeds extends StatefulWidget {
+  String feedOf;
   Stream feedStream;
-  PrivateFeeds({this.feedStream});
+  PrivateFeeds({this.feedStream, this.feedOf});
 
   @override
   _PrivateFeedsState createState() => _PrivateFeedsState();
@@ -21,16 +22,21 @@ class PrivateFeeds extends StatefulWidget {
 
 class _PrivateFeedsState extends State<PrivateFeeds> {
   static NotificationModel likeInstance = NotificationModel();
-  int page = 0;
+  Stream allPvtFeeds;
 
   @override
   void initState(){
     super.initState();
+    print(widget.feedOf);
+    print(UniversalVariables.myPvtUid);
+    Stream<QuerySnapshot> pfs = DatabaseService.instance.getAllMyPvtFeeds();
+    setState(() {
+      allPvtFeeds = pfs;
+    });
   }
-
-
   @override
   Widget build(BuildContext context) {
+
 
     return Scaffold(
         appBar: PreferredSize(
@@ -94,22 +100,23 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
         body: ListView(children: [
           Container(
               height: MediaQuery.of(context).size.height * 0.8,
-              child: listofSelectedFeed(),
+              child: widget.feedOf!=null ? listofSelectedFeeds() : listofAllPvtFeeds(),
           ),
         ]));
   }
 
-  Widget listofSelectedFeed(){
+
+  Widget listofSelectedFeeds(){
     return StreamBuilder(
         stream: widget.feedStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             print('in waiting of Pvt feeds');
-            return Center(child: Container(child: Text('loading...')));
+            return Center(child: Container(child: CircularProgressIndicator()));
           }
 
           if (snapshot.data == null || snapshot.data.documents.length == 0) {
-            return Center(child: Container(child: Text('No feeds')));
+            return Center(child: Container(child: Text('No feeds are posted by your ' + widget.feedOf)));
           }
           var posts = snapshot.data.documents;
           return Column(children: [
@@ -133,116 +140,13 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
         });
   }
 
-  /*Widget listofallFriendsFeeds(){
-    return StreamBuilder(
-        stream: allFriendFeeds,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of F feeds');
-            return Center(child: Container(child: Text('loading...')));
-          }
-
-          if (snapshot.data == null || snapshot.data.documents.length == 0) {
-            return Center(child: Container(child: Text('No friend feeds')));
-          }
-          var posts = snapshot.data.documents;
-          return Column(children: [
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: posts.length,
-                itemBuilder: (context, i) {
-                  return Column(
-                    children: [
-                      postTile(posts[i]),
-                      Divider(
-                        height: 10.0,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
-          ]);
-        });
-  }
-
-
-  Widget listofallAcquaintanceFeeds(){
-    return StreamBuilder(
-        stream: allAcquaintanceFeeds,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of AQ feed');
-            return Center(child: Container(child: Text('loading...')));
-          }
-
-          if (snapshot.data == null || snapshot.data.documents.length == 0) {
-            return Center(child: Container(child: Text('No acquaintance feeds')));
-          }
-          var posts = snapshot.data.documents;
-          return Column(children: [
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: posts.length,
-                itemBuilder: (context, i) {
-                  return Column(
-                    children: [
-                      postTile(posts[i]),
-                      Divider(
-                        height: 10.0,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
-          ]);
-        });
-  }
-
-  Widget listofallPvtFollowingsFeeds(){
-    return StreamBuilder(
-        stream: allPvtFollowingsFeeds,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of following feeds');
-            return Center(child: Container(child: Text('loading...')));
-          }
-          if (snapshot.data == null || snapshot.data.documents.length == 0) {
-            return Center(child: Container(child: Text('No feeds')));
-          }
-          var posts = snapshot.data.documents;
-          return Column(children: [
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: posts.length,
-                itemBuilder: (context, i) {
-                  return Column(
-                    children: [
-                      postTile(posts[i]),
-                      Divider(
-                        height: 10.0,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
-          ]);
-        });
-  }
-
-
-  Widget listofallFeeds(){
+  Widget listofAllPvtFeeds(){
     return StreamBuilder(
         stream: allPvtFeeds,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of all feeds');
-            return Center(child: Container(child: Text('Loading....')));
+            print('in waiting of Pvt feeds');
+            return Center(child: Container(child: CircularProgressIndicator()));
           }
 
           if (snapshot.data == null || snapshot.data.documents.length == 0) {
@@ -268,8 +172,7 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
             )
           ]);
         });
-  }*/
-
+  }
 
   Widget postTile(QueryDocumentSnapshot post) {
 
@@ -374,7 +277,7 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
         child: Row(
           children: [
             SizedBox(width: 15.0),
-            post.data().containsKey('isLiked') && post.data()['isLiked']==true ? IconButton(icon: Icon(Icons.favorite),
+            post.data().containsKey('isLiked') && post.data()['isLiked']==true ? IconButton(icon: Icon(Icons.favorite, color: Colors.red,),
                 onPressed: () {
                   DatabaseService.instance.removeLikeFromAPostInMyPvtFeed(post.data()['postId'], post.data()['postFrom']);
                 }) : IconButton(
@@ -387,8 +290,7 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
             Container(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  //widget.user["like"] + " Yibed",
-                  '34 Yibed',
+                  post.data().containsKey('isLiked') && post.data()['isLiked']==true ? '1 Yibed' : '0 Yibed',
                   style: TextStyle(fontSize: 12),
                 )),
             Spacer(),
@@ -398,7 +300,7 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
                     return Comment(
                       //isPrivate: true,
                       profileImage: post.data()['image'],
-                      likeCount: '34',
+                      likeCount: post.data().containsKey('isLiked') && post.data()['isLiked']==true ? '1' : '0',
                       name: post.data()['name'],
                       time: timeago.format(DateTime.tryParse(post.data()['timestamp'].toDate().toString())).toString(),
                       type: post.data()['type'],
@@ -409,7 +311,6 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
                   }));
                 },
                 child: SvgPicture.asset('assets/images/message_icon_homePage.svg')),
-            SizedBox(width: 15.0),
             SizedBox(width: 15.0),
             GestureDetector(
                 onTap: () {

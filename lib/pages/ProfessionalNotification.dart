@@ -58,7 +58,7 @@ class _ProfessionalNotificationState extends State<ProfessionalNotification> {
                         DatabaseService.instance.dismissLikeNotificationFromAFollower(notifications[i].data()['postId']);
                       },
                       child: ListTile(
-                          title: Text('${notifications[i].data()['fullname']} has liked your post'),
+                          title: notifications[i].data()['postUrl']!=null ? Text('${notifications[i].data()['fullname']} has liked your post') : Text('${notifications[i].data()['fullname']} has liked your muse'),
                           subtitle: Text(timeago.format(DateTime.tryParse(notifications[i].data()['timestamp'].toDate().toString())).toString()),
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(notifications[i].data()['profileUrl']),

@@ -43,7 +43,7 @@ class _ConversationPageState extends State<ConversationPage> {
     super.initState();
     MessagingService.instance.sendNotification();
     //MessagingService.instance.sendNotification();
-    print(widget.navigatedFromPrivateAc);
+    //print(widget.navigatedFromPrivateAc);
     print(widget.otherUserName);
     print(widget.otherUserUid);
     print(widget.chatRoomId);
@@ -53,6 +53,7 @@ class _ConversationPageState extends State<ConversationPage> {
 
   ScrollController controller = ScrollController();
 
+  //TODO: Make alert box
   void _requestPermission() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await showDialog(
@@ -60,8 +61,7 @@ class _ConversationPageState extends State<ConversationPage> {
           context: context,
           builder: (context) =>
               AlertDialog(
-                title: Text(widget.otherUserFullName +
-                    ' wants to start a conversation with you.'),
+                title: Text(widget.otherUserFullName + ' wants to start a conversation with you.'),
                 content: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -70,9 +70,7 @@ class _ConversationPageState extends State<ConversationPage> {
                         color: Colors.green,
                         onPressed: () async {
                           widget.navigatedFromPrivateAc
-                              ? await DatabaseService.instance.movePvtRMToDM(
-                              widget.otherUserUid)
-                              : await DatabaseService.instance.moveProfRMToDM(
+                              ? null : await DatabaseService.instance.moveProfRMToDM(
                               widget.otherUserUid);
                           NavigationService.instance.goBack();
                         },
@@ -181,7 +179,7 @@ class _ConversationPageState extends State<ConversationPage> {
                     SizedBox(
                       width: 20,
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () => NavigationService.instance.goBack(),
                       child: SvgPicture.asset(
                         'assets/images/back_btn.svg',
@@ -317,6 +315,7 @@ class _ConversationPageState extends State<ConversationPage> {
                                       senderId: widget.navigatedFromPrivateAc ? UniversalVariables.myPvtUid : UniversalVariables.myProfUid,
                                       type: MessageType.Text),
                                   );
+                                  messageEditingController.clear();
                                 }}
                           ),
                         ],

@@ -693,7 +693,6 @@ class _MessagesState extends State<Messages> {
           // ignore: missing_return
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              print('in waiting of CF');
               return Center(child: Container(child: CircularProgressIndicator(),));
             }
 

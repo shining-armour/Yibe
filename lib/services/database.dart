@@ -31,7 +31,7 @@ class DatabaseService {
 
 
 
-  //-----------------------------------------private queries-----------------------------------------//
+  //-----------------------------------------creating private and professional user Account in Database-----------------------------------------//
 
   Future<void> createPvtUserInDB(Map pvtUserMap, String userId) async {
     try {
@@ -48,6 +48,25 @@ class DatabaseService {
       print(e);
     }
   }
+
+  Future<void> createProfUserInDB(Map prfUserMap) async {
+    try {
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(prfUserMap['profId']).set(prfUserMap);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> createProfUserInAllUserCollection(Map UserMap) async {
+    try {
+      await _db.collection(_allUserCollection).doc('PRF - ' + UserMap['profId']).set(UserMap);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+
+  //-----------------------------------------getting information about private and professional users-----------------------------------------//
 
   Future<Map> getPvtCurrentUserInfo(String uid) async {
     try {
@@ -68,6 +87,7 @@ class DatabaseService {
     return query.docs[0].data();
   }
 
+
   Future<String> getPvtProfileUrlofAUser(String chattingWithId) async{
     try{
       DocumentSnapshot doc =  await _db.collection(_userCollection).doc(chattingWithId).get();
@@ -82,30 +102,48 @@ class DatabaseService {
     }
   }
 
-
-  //private search
-  Stream<QuerySnapshot> getAllUsers() {
-    return _db.collection(_allUserCollection).snapshots();
-  }
-
-
-  Future<void> updateHaveAProfAc(String profId) async {
-    print('In update prof ac');
-    print(profId);
-    try{
-       _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).update({'haveProfAc': true, 'profId': profId });
-       _db.collection(_allUserCollection).doc('PVT - ' +UniversalVariables.myPvtUid).update({'haveProfAc': true, 'profId': profId });
-    } catch(e){
-      print(e);
-    }
-  }
+  //-----------------------------------------updating private and professional users information-----------------------------------------//
 
   Future<void> updatePrivateUserInfo(String bio, String imageUrl) async {
     print(bio);
     print(imageUrl);
     try{
-       _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).update({'pvtBio': bio, 'privateUrl': imageUrl });
+      _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).update({'pvtBio': bio, 'privateUrl': imageUrl });
       _db.collection(_allUserCollection).doc('PVT - ' + UniversalVariables.myPvtUid).update({'pvtBio': bio, 'privateUrl': imageUrl });
+    } catch(e){
+      print(e);
+    }
+  }
+
+  Future<void> updateHaveAProfAc(String profId) async {
+    print('In update prof ac');
+    print(profId);
+    try{
+      _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).update({'haveProfAc': true, 'profId': profId });
+      _db.collection(_allUserCollection).doc('PVT - ' +UniversalVariables.myPvtUid).update({'haveProfAc': true, 'profId': profId });
+    } catch(e){
+      print(e);
+    }
+  }
+
+  Future<bool> getProfAcStatus() async{
+    try{
+      DocumentSnapshot doc =  await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).get();
+      return doc.data()['haveProfAc'];
+    } catch(e){
+      print(e);
+      return false;
+    }
+  }
+
+  Future<Map> getProfCurrentUserInfo() async{
+    try{
+      print('In get prof current user Info');
+      print(UniversalVariables.myPvtUid);
+      print('Prof uid :');
+      print(UniversalVariables.myProfUid);
+      DocumentSnapshot doc =  await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).get();
+      return doc.data();
     } catch(e){
       print(e);
     }
@@ -120,6 +158,21 @@ class DatabaseService {
     }
   }
 
+
+  //-----------------------------------------Searching private and professional users information-----------------------------------------//
+
+  //private search
+  Stream<QuerySnapshot> getAllUsers() {
+    return _db.collection(_allUserCollection).snapshots();
+  }
+
+  //prof search
+  Stream<QuerySnapshot> getAllProfUsers() {
+    return _db.collection(_allUserCollection).where('accountType', isEqualTo: 'Professional').snapshots();
+  }
+
+
+  //-----------------------------------------Connections-----------------------------------------//
 
   Future<void> sendMyConnectionRequest(Map myConnectionMap) async {
     try {
@@ -180,31 +233,10 @@ class DatabaseService {
     }
   }
 
-  Future<void> incrementMyPvtFollowing(String otherUserUid) async {
-    try {
-      DocumentSnapshot doc =  await _db.collection(_allUserCollection).doc('PRF - '+ otherUserUid).get();
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFollowings).doc(otherUserUid).set({'uid': otherUserUid, 'name': doc.data()['BusinessName'], 'url': doc.data()['profUrl'], 'myRelation': 'Following'});
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> decrementMyPvtFollowing(String otherUserUid) async {
-    try {
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFollowings).doc(otherUserUid).delete();
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Stream<QuerySnapshot> getPvtNotifications() {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateNotifications).snapshots();
-  }
-
   Future<bool> checkUserExistsInMyConnection(String otherUserUid) async {
     bool exists = false;
     try {
-       await _db.collection(_userCollection).doc(otherUserUid).collection(_privateConnections).doc(UniversalVariables.myPvtUid).get().then((doc) {
+      await _db.collection(_userCollection).doc(otherUserUid).collection(_privateConnections).doc(UniversalVariables.myPvtUid).get().then((doc) {
         doc.exists ? exists = true : exists = false;
       });
       return exists;
@@ -227,6 +259,26 @@ class DatabaseService {
     }
   }
 
+
+  //-----------------------------------------Private Following-----------------------------------------//
+
+  Future<void> incrementMyPvtFollowing(String otherUserUid) async {
+    try {
+      DocumentSnapshot doc =  await _db.collection(_allUserCollection).doc('PRF - '+ otherUserUid).get();
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFollowings).doc(otherUserUid).set({'uid': otherUserUid, 'name': doc.data()['BusinessName'], 'url': doc.data()['profUrl'], 'myRelation': 'Following'});
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> decrementMyPvtFollowing(String otherUserUid) async {
+    try {
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFollowings).doc(otherUserUid).delete();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<bool> checkUserExistsInMyPvtFollowing(String otherUserUid) async {
     bool exists = false;
     try {
@@ -240,651 +292,7 @@ class DatabaseService {
     }
   }
 
-  Future<int> getConnectionCountOfAUser(String uid) async {
-    try {
-      QuerySnapshot connections = await _db.collection(_userCollection).doc(uid).collection(_privateConnections).get();
-      List<DocumentSnapshot> connectionCount = connections.docs;
-      return connectionCount.length;
-    } catch(e){
-      print(e);
-      return 0;
-    }
-  }
-
-  Future<int> getPvtFollowingCountOfAUser(String uid) async {
-    try {
-      QuerySnapshot connections = await _db.collection(_userCollection).doc(uid).collection(_privateFollowings).get();
-      List<DocumentSnapshot> pvtFollowingCount = connections.docs;
-      return pvtFollowingCount.length;
-    } catch(e){
-      print(e);
-      return 0;
-    }
-  }
-
-   Stream<QuerySnapshot> getAllMyConnections() {
-      return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllMyPvtFollowings() {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFollowings).snapshots();
-  }
-
-  void uploadPvtPost(Map newPostMap, String postId) async {
-    return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privatePosts).doc(postId).set(newPostMap);
-   // await _db.collection('Posts').doc().set(newPostMap);
-  }
-
-  void AddImagePostToMyConnectionFeed(String name, String image, String caption, String postId, String postUrl, Timestamp timestamp, String relationType) async{
-    Post newPostMap = Post();
-    if(relationType=='CF') {    //if user selects CF, send post to only CF connection
-      print(relationType);
-      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: relationType).get().then((snapshot) =>
-          snapshot.docs.forEach((doc) {
-            print('connection id: ' + doc.data()['uid']);
-            print('connection id: ' + doc.data()['otherUserRelation']);
-            if (doc.data()['otherUserRelation']=='CF'){
-              newPostMap = Post(
-                type: 'image',
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                postUrl: postUrl,
-                caption: caption,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                myRelation2: 'F',
-                timestamp: Timestamp.now(),
-              );
-            }else if (doc.data()['otherUserRelation']=='F'){
-              newPostMap = Post(
-                type: 'image',
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                postUrl: postUrl,
-                caption: caption,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                myRelation2: 'F',
-                timestamp: Timestamp.now(),
-              );
-            } else{
-              newPostMap = Post(
-                type: 'image',
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                postUrl: postUrl,
-                caption: caption,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                timestamp: Timestamp.now(),
-              );
-            }
-            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMap(newPostMap));
-          }));
-    } else if (relationType=='F' ){   //if user selects F, send post to connections - CF,F
-      print(relationType);
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: 'CF').get().then((snapshot) {
-        snapshot.docs.forEach((doc)  {
-          print('connection id: ' + doc.data()['uid']);
-          print('connection id: ' + doc.data()['otherUserRelation']);
-          if (doc.data()['otherUserRelation']=='CF'){
-            newPostMap = Post(
-              type: 'image',
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              postUrl: postUrl,
-              caption: caption,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              myRelation2: 'F',
-              timestamp: Timestamp.now(),
-            );
-          }else if (doc.data()['otherUserRelation']=='F'){
-            newPostMap = Post(
-              type: 'image',
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              postUrl: postUrl,
-              caption: caption,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              myRelation2: 'F',
-              timestamp: Timestamp.now(),
-            );
-          } else{
-            newPostMap = Post(
-              type: 'image',
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              postUrl: postUrl,
-              caption: caption,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              timestamp: Timestamp.now(),
-            );
-          }
-          _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMap(newPostMap));
-        });
-      });
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: 'F').get().then((snapshot) {
-        snapshot.docs.forEach((doc)  {
-          print('connection id: ' + doc.data()['uid']);
-          print('connection id: ' + doc.data()['otherUserRelation']);
-          if (doc.data()['otherUserRelation']=='CF'){
-            newPostMap = Post(
-              type: 'image',
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              postUrl: postUrl,
-              caption: caption,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              myRelation2: 'F',
-              timestamp: Timestamp.now(),
-            );
-          }else if (doc.data()['otherUserRelation']=='F'){
-            newPostMap = Post(
-              type: 'image',
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              postUrl: postUrl,
-              caption: caption,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              myRelation2: 'F',
-              timestamp: Timestamp.now(),
-            );
-          } else{
-            newPostMap = Post(
-              type: 'image',
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              postUrl: postUrl,
-              caption: caption,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              timestamp: Timestamp.now(),
-            );
-          }
-          _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMap(newPostMap));
-        });});
-    } /*else if(relationType=='AQ') {    //if user selects AQ, send post to only AQ connection
-      print(relationType);
-      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: relationType).get().then((snapshot) =>
-          snapshot.docs.forEach((doc) {
-            print('connection id: ' + doc.data()['uid']);
-            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap);
-            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).update({'myRelation': doc.data()['otherUserRelation']});
-          }));
-    }*/ else {     //if user selects All, send post to all connections - CF,F,AQ
-      print(relationType);
-      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).get().then((snapshot) =>
-          snapshot.docs.forEach((doc) {
-            print('connection id: ' + doc.data()['uid']);
-            print('connection id: ' + doc.data()['otherUserRelation']);
-            if (doc.data()['otherUserRelation']=='CF'){
-              newPostMap = Post(
-                type: 'image',
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                postUrl: postUrl,
-                caption: caption,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                myRelation2: 'F',
-                timestamp: Timestamp.now(),
-              );
-            }else if (doc.data()['otherUserRelation']=='F'){
-              newPostMap = Post(
-                type: 'image',
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                postUrl: postUrl,
-                caption: caption,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                myRelation2: 'F',
-                timestamp: Timestamp.now(),
-              );
-            } else {
-              newPostMap = Post(
-                type: 'image',
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                postUrl: postUrl,
-                caption: caption,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                timestamp: Timestamp.now(),
-              );
-            }
-            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMap(newPostMap));
-          }));
-    }
-  }
-
-  void AddMusePostToMyConnectionFeed(String name, String image, String postId, String museText, Timestamp timestamp, String relationType) async{
-    Post newPostMap = Post();
-    if(relationType=='CF') {    //if user selects CF, send post to only CF connection
-      print(relationType);
-      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: relationType).get().then((snapshot) =>
-          snapshot.docs.forEach((doc) {
-            print('connection id: ' + doc.data()['uid']);
-            print('connection id: ' + doc.data()['otherUserRelation']);
-            if (doc.data()['otherUserRelation']=='CF'){
-              newPostMap = Post.text(
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                type: 'text',
-                postText: museText,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                myRelation2: 'F',
-                timestamp: Timestamp.now(),
-              );
-            }else if (doc.data()['otherUserRelation']=='F'){
-              newPostMap = Post.text(
-                type: 'text',
-                postText: museText,
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                myRelation2: 'F',
-                timestamp: Timestamp.now(),
-              );
-            } else{
-              newPostMap = Post.text(
-                type: 'text',
-                postText: museText,
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                timestamp: Timestamp.now(),
-              );
-            }
-            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMapMuse(newPostMap));
-          }));
-    } else if (relationType=='F' ){   //if user selects F, send post to connections - CF,F
-      print(relationType);
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: 'CF').get().then((snapshot) {
-        snapshot.docs.forEach((doc)  {
-          print('connection id: ' + doc.data()['uid']);
-          print('connection id: ' + doc.data()['otherUserRelation']);
-          if (doc.data()['otherUserRelation']=='CF'){
-            newPostMap = Post.text(
-              type: 'text',
-              postText: museText,
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              myRelation2: 'F',
-              timestamp: Timestamp.now(),
-            );
-          }else if (doc.data()['otherUserRelation']=='F'){
-            newPostMap = Post.text(
-              type: 'text',
-              postText: museText,
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              myRelation2: 'F',
-              timestamp: Timestamp.now(),
-            );
-          } else{
-            newPostMap = Post.text(
-              type: 'text',
-              postText: museText,
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              timestamp: Timestamp.now(),
-            );
-          }
-          _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMapMuse(newPostMap));
-        });
-      });
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: 'F').get().then((snapshot) {
-        snapshot.docs.forEach((doc)  {
-          print('connection id: ' + doc.data()['uid']);
-          print('connection id: ' + doc.data()['otherUserRelation']);
-          if (doc.data()['otherUserRelation']=='CF'){
-            newPostMap = Post.text(
-              type: 'text',
-              postText: museText,
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              myRelation2: 'F',
-              timestamp: Timestamp.now(),
-            );
-          }else if (doc.data()['otherUserRelation']=='F'){
-            newPostMap = Post.text(
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              type: 'text',
-              postText: museText,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              myRelation2: 'F',
-              timestamp: Timestamp.now(),
-            );
-          } else{
-            newPostMap = Post.text(
-              postFrom: UniversalVariables.myPvtUid,
-              postId: postId,
-              postFor: relationType,
-              name: name,
-              type: 'text',
-              postText: museText,
-              image: image,
-              myRelation1: doc.data()['otherUserRelation'],
-              timestamp: Timestamp.now(),
-            );
-          }
-          _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMapMuse(newPostMap));
-        });});
-    } /*else if(relationType=='AQ') {    //if user selects AQ, send post to only AQ connection
-      print(relationType);
-      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: relationType).get().then((snapshot) =>
-          snapshot.docs.forEach((doc) {
-            print('connection id: ' + doc.data()['uid']);
-            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap);
-            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).update({'myRelation': doc.data()['otherUserRelation']});
-          }));
-    }*/ else {     //if user selects All, send post to all connections - CF,F,AQ
-      print(relationType);
-      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).get().then((snapshot) =>
-          snapshot.docs.forEach((doc) {
-            print('connection id: ' + doc.data()['uid']);
-            print('connection id: ' + doc.data()['otherUserRelation']);
-            if (doc.data()['otherUserRelation']=='CF'){
-              newPostMap = Post.text(
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                type: 'text',
-                postText: museText,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                myRelation2: 'F',
-                timestamp: Timestamp.now(),
-              );
-            }else if (doc.data()['otherUserRelation']=='F'){
-              newPostMap = Post.text(
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                type: 'text',
-                postText: museText,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                myRelation2: 'F',
-                timestamp: Timestamp.now(),
-              );
-            } else {
-              newPostMap = Post.text(
-                postFrom: UniversalVariables.myPvtUid,
-                postId: postId,
-                postFor: relationType,
-                name: name,
-                type: 'text',
-                postText: museText,
-                image: image,
-                myRelation1: doc.data()['otherUserRelation'],
-                timestamp: Timestamp.now(),
-              );
-            }
-            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMapMuse(newPostMap));
-          }));
-    }
-  }
-
-  Stream<QuerySnapshot> getAllMyPvtFeeds() {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).orderBy('timestamp',descending: true).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllCloseFriendsFeeds() {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).where('myRelation1', isEqualTo: 'CF').orderBy('timestamp',descending: true).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllFriendsFeeds() {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).where('myRelation2', isEqualTo: 'F').orderBy('timestamp',descending: true).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllAcquaintanceFeeds() {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).where('myRelation1', isEqualTo: 'AQ').orderBy('timestamp',descending: true).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllPvtFollowingsFeeds() {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).where('postFor', isEqualTo: 'Follower').orderBy('timestamp',descending: true).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllMyPvtPostImage() {
-    return  _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privatePosts).where('type', isEqualTo: 'image').orderBy('timestamp', descending: true).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllPvtPostImageofOtherUser(String pvtId) {
-   return  _db.collection(_userCollection).doc(pvtId).collection(_privatePosts).where('type', isEqualTo: 'image').orderBy('timestamp', descending: true).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllMyPvtPostMuse() {
-    return  _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privatePosts).where('type', isEqualTo: 'text').orderBy('timestamp', descending: true).snapshots();
-  }
-
-  Stream<QuerySnapshot> getAllPvtPostMuseofOtherUser(String pvtId) {
-    return  _db.collection(_userCollection).doc(pvtId).collection(_privatePosts).where('type', isEqualTo: 'text').orderBy('timestamp', descending: true).snapshots();
-  }
-
-  Future<void> addLikeToAPostInMyPvtFeed(Map likeMap, String postId, String posterId, String postFor, String postUrl) async {
-    try {
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).doc(postId).update({'isLiked': true});
-      if(postFor=='Follower'){
-        await _db.collection(_allUserCollection).doc('PRF - '+posterId).get().then((value) => _db.collection(_userCollection).doc(value.data()['pvtId']).collection(_profAccount).doc(posterId).collection(_profNotifications).doc(postId).set(likeMap));
-        await _db.collection(_allUserCollection).doc('PRF - '+posterId).get().then((value) => _db.collection(_userCollection).doc(value.data()['pvtId']).collection(_profAccount).doc(posterId).collection(_profNotifications).doc(postId).update({'postUrl': postUrl, 'postId': postId}));
-      }else{
-        print(posterId);
-        await _db.collection(_userCollection).doc(posterId).collection(_privateNotifications).doc(postId).set(likeMap);
-        await _db.collection(_userCollection).doc(posterId).collection(_privateNotifications).doc(postId).update({'postUrl': postUrl, 'postId': postId});
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> removeLikeFromAPostInMyPvtFeed(String postId, String posterId) async {
-    try {
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).doc(postId).update({'isLiked': false});
-      if(posterId.contains('-')){
-        await _db.collection(_allUserCollection).doc('PRF - '+posterId).get().then((value) => _db.collection(_userCollection).doc(value.data()['pvtId']).collection(_profAccount).doc(posterId).collection(_profNotifications).doc(postId).delete());
-      }else{
-        print(posterId);
-        await _db.collection(_userCollection).doc(posterId).collection(_privateNotifications).doc(postId).delete();
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> dismissLikeNotificationFromAConnection(String postId) async {
-    try {
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateNotifications).doc(postId).delete();
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Stream<List<ConversationSnippet>> getCFUserConversations() {
-    var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats);
-    return _ref.where('myRelation', isEqualTo: 'CF').snapshots().map((snapshot) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        return ConversationSnippet.fromFirestore(doc);
-      }).toList();
-    });
-  }
-
-  Stream<List<ConversationSnippet>> getFUserConversations() {
-    var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats);
-    return _ref.where('myRelation', isEqualTo: 'F').snapshots().map((snapshot) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        return ConversationSnippet.fromFirestore(doc);
-      }).toList();
-    });
-  }
-
-  Stream<List<ConversationSnippet>> getAQUserConversations() {
-    var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats);
-    return _ref.where('myRelation', isEqualTo: 'AQ').snapshots().map((snapshot) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        return ConversationSnippet.fromFirestore(doc);
-      }).toList();
-    });
-  }
-
-  Stream<List<ConversationSnippet>> getFollowingUserConversations() {
-    var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats);
-    return _ref.where('myRelation', isEqualTo: 'Following').snapshots().map((snapshot) {
-      print(snapshot.docs);
-      return snapshot.docs.map((doc) {
-        return ConversationSnippet.fromFirestore(doc);
-      }).toList();
-    });
-  }
-
-  Future<void> movePvtRMToDM(String chattingWithId) async {
-    print(chattingWithId);
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats).doc(chattingWithId).update({'typeOfConversation': 'Direct'});
-  }
-
-  Future<void> addThisPvtChatToSelective(String chattingWithId) async {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats).doc(chattingWithId).update({'InSelective': true});
-  }
-
-  Future<void> removeThisPvtChatFromSelective(String chattingWithId) async{
-    await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats).doc(chattingWithId).update({'InSelective': false});
-  }
-
-
-  //-----------------------------------------professional queries-----------------------------------------//
-
-  Future<bool> getProfAcStatus() async{
-    try{
-      DocumentSnapshot doc =  await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).get();
-      return doc.data()['haveProfAc'];
-    } catch(e){
-      print(e);
-      return false;
-    }
-  }
-
-  Future<String> getProfUidIfUserHaveProfAc(String myPvtId) async {
-    try{
-      DocumentSnapshot doc =  await _db.collection(_userCollection).doc(myPvtId).get();
-      bool haveAProfAc = doc.data()['haveProfAc'];
-      String profUid;
-      if(haveAProfAc==true){
-        await _db.collection(_allUserCollection).where('pvtId',isEqualTo: myPvtId).get().then((snapshot) =>
-            snapshot.docs.forEach((doc) {
-              profUid = doc.data()['uid'];
-            }));
-      }
-      return profUid;
-    } catch(e){
-      print(e);
-      return 'null';
-    }
-  }
-
-  Future<void> createProfUserInDB(Map prfUserMap) async {
-    try {
-      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(prfUserMap['profId']).set(prfUserMap);
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> createProfUserInAllUserCollection(Map UserMap) async {
-    try {
-      await _db.collection(_allUserCollection).doc('PRF - ' + UserMap['profId']).set(UserMap);
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Stream<QuerySnapshot> getProfCurrentUserInfoStream(String myProfUid) {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).where('uid', isEqualTo: myProfUid).snapshots();
-  }
-
-  Future<Map> getProfCurrentUserInfo() async{
-    try{
-      print('In get prof current user Info');
-      print(UniversalVariables.myPvtUid);
-      print('Prof uid :');
-      print(UniversalVariables.myProfUid);
-      DocumentSnapshot doc =  await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).get();
-      return doc.data();
-    } catch(e){
-      print(e);
-    }
-  }
-
-
-
-  //prof search page
-  Stream<QuerySnapshot> getAllProfUsers() {
-    return _db.collection(_allUserCollection).where('accountType', isEqualTo: 'Professional').snapshots();
-  }
-
+  //-----------------------------------------Prof Follower and Following-----------------------------------------//
 
   Future<void> sendFollowingConfirmation(Map myFollowingMap, String otherUserPvtId) async {
     try {
@@ -975,10 +383,6 @@ class DatabaseService {
     }
   }
 
-  Stream<QuerySnapshot> getProfNotifications() {
-    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profNotifications).snapshots();
-  }
-
   Future<bool> checkUserExistsInMyProfFollowing(String otherUserUid) async {
     bool exists = false;
     try {
@@ -989,6 +393,30 @@ class DatabaseService {
     } catch(e){
       print(e);
       return false;
+    }
+  }
+
+  //-----------------------------------------Getting private connections and following count-----------------------------------------//
+
+  Future<int> getConnectionCountOfAUser(String uid) async {
+    try {
+      QuerySnapshot connections = await _db.collection(_userCollection).doc(uid).collection(_privateConnections).get();
+      List<DocumentSnapshot> connectionCount = connections.docs;
+      return connectionCount.length;
+    } catch(e){
+      print(e);
+      return 0;
+    }
+  }
+
+  Future<int> getPvtFollowingCountOfAUser(String uid) async {
+    try {
+      QuerySnapshot connections = await _db.collection(_userCollection).doc(uid).collection(_privateFollowings).get();
+      List<DocumentSnapshot> pvtFollowingCount = connections.docs;
+      return pvtFollowingCount.length;
+    } catch(e){
+      print(e);
+      return 0;
     }
   }
 
@@ -1014,6 +442,16 @@ class DatabaseService {
     }
   }
 
+  //-----------------------------------------Getting private connections and following users stream-----------------------------------------//
+
+  Stream<QuerySnapshot> getAllMyConnections() {
+      return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).snapshots();
+  }
+
+  Stream<QuerySnapshot> getAllMyPvtFollowings() {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFollowings).snapshots();
+  }
+
   Stream<QuerySnapshot> getAllMyProfFollowers() {
     return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profFollowers).snapshots();
   }
@@ -1022,6 +460,424 @@ class DatabaseService {
     return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profFollowings).snapshots();
   }
 
+
+  //-----------------------------------------Getting Private and Professional Notifications-----------------------------------------//
+
+  Stream<QuerySnapshot> getPvtNotifications() {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateNotifications).snapshots();
+  }
+
+  Stream<QuerySnapshot> getProfNotifications() {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profNotifications).snapshots();
+  }
+
+
+  //-----------------------------------------Uploading Private Post-----------------------------------------//
+
+  void uploadPvtPost(Map newPostMap, String postId) async {
+    return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privatePosts).doc(postId).set(newPostMap);
+   // await _db.collection('Posts').doc().set(newPostMap);
+  }
+
+  void AddImagePostToMyConnectionFeed(String name, String image, String caption, String postId, String postUrl, Timestamp timestamp, String relationType) async{
+    Post newPostMap = Post();
+    final String postFor = 'Incircle';
+    if(relationType=='CF') {    //if user selects CF, send post to only CF connection
+      print(relationType);
+      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: relationType).get().then((snapshot) =>
+          snapshot.docs.forEach((doc) {
+            print('connection id: ' + doc.data()['uid']);
+            print('connection id: ' + doc.data()['otherUserRelation']);
+            if (doc.data()['otherUserRelation']=='CF'){
+              newPostMap = Post(
+                type: 'image',
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                postUrl: postUrl,
+                caption: caption,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                myRelation2: 'F',
+                timestamp: Timestamp.now(),
+              );
+            }else if (doc.data()['otherUserRelation']=='F'){
+              newPostMap = Post(
+                type: 'image',
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                postUrl: postUrl,
+                caption: caption,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                myRelation2: 'F',
+                timestamp: Timestamp.now(),
+              );
+            } else{
+              newPostMap = Post(
+                type: 'image',
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                postUrl: postUrl,
+                caption: caption,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                timestamp: Timestamp.now(),
+              );
+            }
+            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMap(newPostMap));
+          }));
+    } else if (relationType=='F' ){   //if user selects F, send post to connections - CF,F
+      print(relationType);
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: 'CF').get().then((snapshot) {
+        snapshot.docs.forEach((doc)  {
+          print('connection id: ' + doc.data()['uid']);
+          print('connection id: ' + doc.data()['otherUserRelation']);
+          if (doc.data()['otherUserRelation']=='CF'){
+            newPostMap = Post(
+              type: 'image',
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              postUrl: postUrl,
+              caption: caption,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              myRelation2: 'F',
+              timestamp: Timestamp.now(),
+            );
+          }else if (doc.data()['otherUserRelation']=='F'){
+            newPostMap = Post(
+              type: 'image',
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              postUrl: postUrl,
+              caption: caption,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              myRelation2: 'F',
+              timestamp: Timestamp.now(),
+            );
+          } else{
+            newPostMap = Post(
+              type: 'image',
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              postUrl: postUrl,
+              caption: caption,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              timestamp: Timestamp.now(),
+            );
+          }
+          _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMap(newPostMap));
+        });
+      });
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: 'F').get().then((snapshot) {
+        snapshot.docs.forEach((doc)  {
+          print('connection id: ' + doc.data()['uid']);
+          print('connection id: ' + doc.data()['otherUserRelation']);
+          if (doc.data()['otherUserRelation']=='CF'){
+            newPostMap = Post(
+              type: 'image',
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              postUrl: postUrl,
+              caption: caption,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              myRelation2: 'F',
+              timestamp: Timestamp.now(),
+            );
+          }else if (doc.data()['otherUserRelation']=='F'){
+            newPostMap = Post(
+              type: 'image',
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              postUrl: postUrl,
+              caption: caption,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              myRelation2: 'F',
+              timestamp: Timestamp.now(),
+            );
+          } else{
+            newPostMap = Post(
+              type: 'image',
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              postUrl: postUrl,
+              caption: caption,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              timestamp: Timestamp.now(),
+            );
+          }
+          _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMap(newPostMap));
+        });});
+    } else {     //if user selects All, send post to all connections - CF,F,AQ
+      print(relationType);
+      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).get().then((snapshot) =>
+          snapshot.docs.forEach((doc) {
+            print('connection id: ' + doc.data()['uid']);
+            print('connection id: ' + doc.data()['otherUserRelation']);
+            if (doc.data()['otherUserRelation']=='CF'){
+              newPostMap = Post(
+                type: 'image',
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                postUrl: postUrl,
+                caption: caption,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                myRelation2: 'F',
+                timestamp: Timestamp.now(),
+              );
+            }else if (doc.data()['otherUserRelation']=='F'){
+              newPostMap = Post(
+                type: 'image',
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                postUrl: postUrl,
+                caption: caption,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                myRelation2: 'F',
+                timestamp: Timestamp.now(),
+              );
+            } else {
+              newPostMap = Post(
+                type: 'image',
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                postUrl: postUrl,
+                caption: caption,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                timestamp: Timestamp.now(),
+              );
+            }
+            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMap(newPostMap));
+          }));
+    }
+  }
+
+  void AddMusePostToMyConnectionFeed(String name, String image, String postId, String museText, Timestamp timestamp, String relationType) async{
+    Post newPostMap = Post();
+    final String postFor = 'Incircle';
+    if(relationType=='CF') {    //if user selects CF, send post to only CF connection
+      print(relationType);
+      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: relationType).get().then((snapshot) =>
+          snapshot.docs.forEach((doc) {
+            print('connection id: ' + doc.data()['uid']);
+            print('connection id: ' + doc.data()['otherUserRelation']);
+            if (doc.data()['otherUserRelation']=='CF'){
+              newPostMap = Post.text(
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                type: 'text',
+                postText: museText,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                myRelation2: 'F',
+                timestamp: Timestamp.now(),
+              );
+            }else if (doc.data()['otherUserRelation']=='F'){
+              newPostMap = Post.text(
+                type: 'text',
+                postText: museText,
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                myRelation2: 'F',
+                timestamp: Timestamp.now(),
+              );
+            } else{
+              newPostMap = Post.text(
+                type: 'text',
+                postText: museText,
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                timestamp: Timestamp.now(),
+              );
+            }
+            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMapMuse(newPostMap));
+          }));
+    } else if (relationType=='F' ){   //if user selects F, send post to connections - CF,F
+      print(relationType);
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: 'CF').get().then((snapshot) {
+        snapshot.docs.forEach((doc)  {
+          print('connection id: ' + doc.data()['uid']);
+          print('connection id: ' + doc.data()['otherUserRelation']);
+          if (doc.data()['otherUserRelation']=='CF'){
+            newPostMap = Post.text(
+              type: 'text',
+              postText: museText,
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              myRelation2: 'F',
+              timestamp: Timestamp.now(),
+            );
+          }else if (doc.data()['otherUserRelation']=='F'){
+            newPostMap = Post.text(
+              type: 'text',
+              postText: museText,
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              myRelation2: 'F',
+              timestamp: Timestamp.now(),
+            );
+          } else{
+            newPostMap = Post.text(
+              type: 'text',
+              postText: museText,
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              timestamp: Timestamp.now(),
+            );
+          }
+          _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMapMuse(newPostMap));
+        });
+      });
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).where('myRelation', isEqualTo: 'F').get().then((snapshot) {
+        snapshot.docs.forEach((doc)  {
+          print('connection id: ' + doc.data()['uid']);
+          print('connection id: ' + doc.data()['otherUserRelation']);
+          if (doc.data()['otherUserRelation']=='CF'){
+            newPostMap = Post.text(
+              type: 'text',
+              postText: museText,
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              myRelation2: 'F',
+              timestamp: Timestamp.now(),
+            );
+          }else if (doc.data()['otherUserRelation']=='F'){
+            newPostMap = Post.text(
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              type: 'text',
+              postText: museText,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              myRelation2: 'F',
+              timestamp: Timestamp.now(),
+            );
+          } else{
+            newPostMap = Post.text(
+              postFrom: UniversalVariables.myPvtUid,
+              postId: postId,
+              postFor: postFor,
+              name: name,
+              type: 'text',
+              postText: museText,
+              image: image,
+              myRelation1: doc.data()['otherUserRelation'],
+              timestamp: Timestamp.now(),
+            );
+          }
+          _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMapMuse(newPostMap));
+        });});
+    } else {     //if user selects All, send post to all connections - CF,F,AQ
+      print(relationType);
+      return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateConnections).get().then((snapshot) =>
+          snapshot.docs.forEach((doc) {
+            print('connection id: ' + doc.data()['uid']);
+            print('connection id: ' + doc.data()['otherUserRelation']);
+            if (doc.data()['otherUserRelation']=='CF'){
+              newPostMap = Post.text(
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                type: 'text',
+                postText: museText,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                myRelation2: 'F',
+                timestamp: Timestamp.now(),
+              );
+            }else if (doc.data()['otherUserRelation']=='F'){
+              newPostMap = Post.text(
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                type: 'text',
+                postText: museText,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                myRelation2: 'F',
+                timestamp: Timestamp.now(),
+              );
+            } else {
+              newPostMap = Post.text(
+                postFrom: UniversalVariables.myPvtUid,
+                postId: postId,
+                postFor: postFor,
+                name: name,
+                type: 'text',
+                postText: museText,
+                image: image,
+                myRelation1: doc.data()['otherUserRelation'],
+                timestamp: Timestamp.now(),
+              );
+            }
+            _db.collection(_userCollection).doc(doc.data()['uid']).collection(_privateFeeds).doc(postId).set(newPostMap.toMapMuse(newPostMap));
+          }));
+    }
+  }
+
+  //-----------------------------------------Uploading professional post-----------------------------------------//
 
   void uploadProfPost(Map newPostMap, String postId) async {
     return await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profPosts).doc(postId).set(newPostMap);
@@ -1039,6 +895,27 @@ class DatabaseService {
         }
       });});
   }
+
+  //-----------------------------------------Getting private posts and muse-----------------------------------------//
+
+  Stream<QuerySnapshot> getAllMyPvtPostImage() {
+    return  _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privatePosts).where('type', isEqualTo: 'image').orderBy('timestamp', descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> getAllPvtPostImageofOtherUser(String pvtId) {
+    return  _db.collection(_userCollection).doc(pvtId).collection(_privatePosts).where('type', isEqualTo: 'image').orderBy('timestamp', descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> getAllMyPvtPostMuse() {
+    return  _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privatePosts).where('type', isEqualTo: 'text').orderBy('timestamp', descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> getAllPvtPostMuseofOtherUser(String pvtId) {
+    return  _db.collection(_userCollection).doc(pvtId).collection(_privatePosts).where('type', isEqualTo: 'text').orderBy('timestamp', descending: true).snapshots();
+  }
+
+
+  //-----------------------------------------Getting professional posts and muse-----------------------------------------//
 
   Stream<QuerySnapshot> getAllMyProfFeeds() {
     return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profFeeds).orderBy('timestamp', descending: true).snapshots();
@@ -1059,6 +936,71 @@ class DatabaseService {
   Stream<QuerySnapshot> getAllProfPostMuseofOtherUser(String pvtId, String profId) {
     return _db.collection(_userCollection).doc(pvtId).collection(_profAccount).doc(profId).collection(_profPosts).where('type', isEqualTo: 'text').orderBy('timestamp', descending: true).snapshots();
   }
+
+
+  //-----------------------------------------Getting private feeds-----------------------------------------//
+
+  Stream<QuerySnapshot> getAllMyPvtFeeds() {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).orderBy('timestamp',descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> getAllCloseFriendsFeeds() {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).where('myRelation1', isEqualTo: 'CF').orderBy('timestamp',descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> getAllFriendsFeeds() {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).where('myRelation2', isEqualTo: 'F').orderBy('timestamp',descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> getAllAcquaintanceFeeds() {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).where('postFor', isEqualTo: 'Incircle').orderBy('timestamp',descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot> getAllPvtFollowingsFeeds() {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).where('postFor', isEqualTo: 'Follower').orderBy('timestamp',descending: true).snapshots();
+  }
+
+  //-----------------------------------------Adding like to a private post-----------------------------------------//
+
+  Future<void> addLikeToAPostInMyPvtFeed(Map likeMap, String postId, String posterId, String postFor, String postUrl) async {
+    try {
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).doc(postId).update({'isLiked': true});
+      if(postFor=='Follower'){
+        await _db.collection(_allUserCollection).doc('PRF - '+posterId).get().then((value) => _db.collection(_userCollection).doc(value.data()['pvtId']).collection(_profAccount).doc(posterId).collection(_profNotifications).doc(postId).set(likeMap));
+        await _db.collection(_allUserCollection).doc('PRF - '+posterId).get().then((value) => _db.collection(_userCollection).doc(value.data()['pvtId']).collection(_profAccount).doc(posterId).collection(_profNotifications).doc(postId).update({'postUrl': postUrl, 'postId': postId}));
+      }else{
+        print(posterId);
+        await _db.collection(_userCollection).doc(posterId).collection(_privateNotifications).doc(postId).set(likeMap);
+        await _db.collection(_userCollection).doc(posterId).collection(_privateNotifications).doc(postId).update({'postUrl': postUrl, 'postId': postId});
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> removeLikeFromAPostInMyPvtFeed(String postId, String posterId) async {
+    try {
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateFeeds).doc(postId).update({'isLiked': false});
+      if(posterId.contains('-')){
+        await _db.collection(_allUserCollection).doc('PRF - '+posterId).get().then((value) => _db.collection(_userCollection).doc(value.data()['pvtId']).collection(_profAccount).doc(posterId).collection(_profNotifications).doc(postId).delete());
+      }else{
+        print(posterId);
+        await _db.collection(_userCollection).doc(posterId).collection(_privateNotifications).doc(postId).delete();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> dismissLikeNotificationFromAConnection(String postId) async {
+    try {
+      await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateNotifications).doc(postId).delete();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //-----------------------------------------Adding like to a professional post-----------------------------------------//
 
   Future<void> addLikeToAPostInMyProfFeed(Map likeMap, String postId, String posterId, String postFor, String postUrl) async {
     try {
@@ -1087,6 +1029,50 @@ class DatabaseService {
     }
   }
 
+  //-----------------------------------------Getting Private Conversations-----------------------------------------//
+
+  Stream<List<ConversationSnippet>> getCFUserConversations() {
+    var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats);
+    return _ref.where('myRelation', isEqualTo: 'CF').snapshots().map((snapshot) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return ConversationSnippet.fromFirestore(doc);
+      }).toList();
+    });
+  }
+
+  Stream<List<ConversationSnippet>> getFUserConversations() {
+    var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats);
+    return _ref.where('myRelation', isEqualTo: 'F').snapshots().map((snapshot) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return ConversationSnippet.fromFirestore(doc);
+      }).toList();
+    });
+  }
+
+  Stream<List<ConversationSnippet>> getAQUserConversations() {
+    var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats);
+    return _ref.where('myRelation', isEqualTo: 'AQ').snapshots().map((snapshot) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return ConversationSnippet.fromFirestore(doc);
+      }).toList();
+    });
+  }
+
+  Stream<List<ConversationSnippet>> getFollowingUserConversations() {
+    var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats);
+    return _ref.where('myRelation', isEqualTo: 'Following').snapshots().map((snapshot) {
+      print(snapshot.docs);
+      return snapshot.docs.map((doc) {
+        return ConversationSnippet.fromFirestore(doc);
+      }).toList();
+    });
+  }
+
+  //-----------------------------------------Getting Professional Conversations-----------------------------------------//
+
   Stream<List<ConversationSnippet>> getProfUserDirectConversations() {
     var _ref = _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profChats);
     return _ref.where('typeOfConversation', isEqualTo: 'Direct').snapshots().map((_snapshot) {
@@ -1112,6 +1098,19 @@ class DatabaseService {
     return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profChats).doc(chattingWithId).update({'typeOfConversation': 'Direct'});
   }
 
+
+  //-----------------------------------------Selective private chat-----------------------------------------//
+
+  Future<void> addThisPvtChatToSelective(String chattingWithId) async {
+    return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats).doc(chattingWithId).update({'InSelective': true});
+  }
+
+  Future<void> removeThisPvtChatFromSelective(String chattingWithId) async{
+    await _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_privateChats).doc(chattingWithId).update({'InSelective': false});
+  }
+
+  //-----------------------------------------Selective professional chat-----------------------------------------//
+
   Future<void> addThisProfChatToSelective(String chattingWithId) async {
     return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profChats).doc(chattingWithId).update({'InSelective': true});
   }
@@ -1119,7 +1118,6 @@ class DatabaseService {
   Future<void> removeThisProfChatFromSelective(String chattingWithId) async{
     return _db.collection(_userCollection).doc(UniversalVariables.myPvtUid).collection(_profAccount).doc(UniversalVariables.myProfUid).collection(_profChats).doc(chattingWithId).update({'InSelective': false});
   }
-
 
   //-----------------------------------------Chats-----------------------------------------//
 

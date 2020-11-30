@@ -16,7 +16,7 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b2f30a-4efa-4781-9652-136b74f4d400" name="Default Changelist" comment="FIXed growth.dart" />
+    <list default="true" id="33b2f30a-4efa-4781-9652-136b74f4d400" name="Default Changelist" comment="All" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -140,12 +140,12 @@
                   </entry>
                 </map>
               </option>
+              <option name="COLUMN_ORDER" />
             </State>
           </value>
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
@@ -202,11 +202,11 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="407" y="194" key="MultipleFileMergeDialog/0.0.1536.864@0.0.1536.864" timestamp="1606448424287" />
-    <state x="277" y="77" key="SettingsEditor" timestamp="1606712098752">
-      <screen x="0" y="0" width="1536" height="864" />
+    <state x="346" y="93" key="SettingsEditor" timestamp="1606718217745">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="277" y="77" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1606712098752" />
-    <state x="346" y="93" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1606224107005" />
+    <state x="346" y="93" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1606718217745" />
     <state x="361" y="165" key="Vcs.Push.Dialog.v2" timestamp="1606711438681">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

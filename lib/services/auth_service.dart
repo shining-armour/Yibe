@@ -13,20 +13,15 @@ class AuthenticationService {
     _firebaseAuth = FirebaseAuth.instance;
   }
 
-  Future<String> signUp(
-      {String email, String password, String fullName, String userName}) async {
+  Future<String> signUp({String email, String password, String fullName, String userName}) async {
     try {
-      User user = (await _firebaseAuth.createUserWithEmailAndPassword(
-              email: email, password: password))
-          .user;
-      await user
-          .updateProfile(displayName: fullName)
-          .then((value) => passPvtUserInfoToDb(user, fullName, userName));
+       User user = (await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password)).user;
+      print('user id' + user.uid);
+      await user.updateProfile(displayName: fullName).then((value) => passPvtUserInfoToDb(user, fullName, userName));
       if (!user.emailVerified) {
         await user.sendEmailVerification();
       }
-      AuthenticationService.instance
-          .signOut(); //make current user null so that even if user does not verify email he wont be signed in
+      AuthenticationService.instance.signOut();   //make current user null so that even if user does not verify email he wont be signed in
       return ('Sign up successful. Verify your email address to sign in');
     } on FirebaseAuthException catch (e) {
       return (e.message);
@@ -35,20 +30,17 @@ class AuthenticationService {
 
   Future<String> signIn({String email, String password}) async {
     try {
-      if ((await _firebaseAuth.signInWithEmailAndPassword(
-              email: email, password: password)) !=
-          null) {
+      if((await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password))!=null){
         final User user = _firebaseAuth.currentUser;
         print(user.uid);
-        if (user.emailVerified) {
-          await DatabaseService.instance
-              .getPvtCurrentUserInfo(user.uid)
-              .then((value) => setSP(user, value['profId'], value['username']));
+        if(user.emailVerified) {
+          await DatabaseService.instance.getPvtCurrentUserInfo(user.uid).then((value) => setSP(user, value['profId'], value['username']));
           return 'Sign In Successful';
-        } else {
+        } else{
           return 'Verify your email first';
         }
       }
+
     } on FirebaseAuthException catch (e) {
       return (e.message);
     }
@@ -79,9 +71,8 @@ class AuthenticationService {
       fcmToken: await MessagingService.instance.getToken(),
     );
     print(pvtUserMap.toMap(pvtUserMap));
-    await DatabaseService.instance
-        .createPvtUserInDB(pvtUserMap.toMap(pvtUserMap), user.uid);
-    await DatabaseService.instance.createPvtUserInAllUserCollection(
-        pvtUserMap.toMap(pvtUserMap), user.uid);
+    await DatabaseService.instance.createPvtUserInDB(pvtUserMap.toMap(pvtUserMap), user.uid);
+    await DatabaseService.instance.createPvtUserInAllUserCollection(pvtUserMap.toMap(pvtUserMap), user.uid);
   }
+
 }

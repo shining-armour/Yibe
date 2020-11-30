@@ -65,14 +65,16 @@ class _PrivateNotificationState extends State<PrivateNotification> {
       otherUserRelation: type,
       username: UniversalVariables.myPvtUsername,
     );
-    receiverConnectionInstance = ConnectionModel(
-      uid: notification.data()['From'],
-      username: notification.data()['username'],
-      fullname: notification.data()['fullname'],
-      profileUrl: notification.data()['profileUrl'],
-      myRelation: type,
-      otherUserRelation: notification.data()['otherUserRelation'],
-    );
+    DatabaseService.instance.getPvtProfileUrlofAUser(notification.data()['From']).then((value) {
+      receiverConnectionInstance = ConnectionModel(
+        uid: notification.data()['From'],
+        username: notification.data()['username'],
+        fullname: notification.data()['fullname'],
+        profileUrl: value ?? UniversalVariables.defaultImageUrl,
+        myRelation: type,
+        otherUserRelation: notification.data()['otherUserRelation'],
+      );
+    });
     DatabaseService.instance.acceptConnectionRequest(notification.data()['From'], senderConnectionInstance.toMap(senderConnectionInstance), receiverConnectionInstance.toMap(receiverConnectionInstance)).then((value) => sendConnectionConfirmation(notification, type));});
 
   }
@@ -115,7 +117,7 @@ class _PrivateNotificationState extends State<PrivateNotification> {
             return ListView.builder(
               itemCount: notifications.length,
               itemBuilder: (context, i) {
-                print(notifications[i].data());
+                //print(notifications[i].data());
                 return Column(
                   children: [
                     notifications[i].data()['type']=='Connection Request' ? ListTile(
@@ -139,7 +141,7 @@ class _PrivateNotificationState extends State<PrivateNotification> {
                           DatabaseService.instance.dismissLikeNotificationFromAConnection(notifications[i].data()['postId']);
                         },
                         child: ListTile(
-                            title: Text('${notifications[i].data()['fullname']} has liked your post'),
+                            title: notifications[i].data()['postUrl']!=null ? Text('${notifications[i].data()['fullname']} has liked your post') : Text('${notifications[i].data()['fullname']} has liked your muse'),
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(notifications[i].data()['profileUrl']),
                             ),
@@ -152,7 +154,7 @@ class _PrivateNotificationState extends State<PrivateNotification> {
                                 maxHeight: 50,
                               ),
                               child: Image.network(notifications[i].data()['postUrl'], fit: BoxFit.cover),
-                            ): Container())) :
+                            ): null)) :
                     notifications[i].data()['type']=='Connection Accepted' ? Dismissible(
                         key: Key(notifications[i].toString()),
                         onDismissed: (direction){

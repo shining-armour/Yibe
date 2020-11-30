@@ -9,8 +9,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:yibe_final_ui/pages/Message.dart';
 import 'package:yibe_final_ui/pages/Notification.dart';
+import 'package:yibe_final_ui/widget/custom_dialog_box.dart';
 
 class PrivateFeeds extends StatefulWidget {
+  String feedOf;
+  Stream feedStream;
+  PrivateFeeds({this.feedStream, this.feedOf});
 
   @override
   _PrivateFeedsState createState() => _PrivateFeedsState();
@@ -18,33 +22,21 @@ class PrivateFeeds extends StatefulWidget {
 
 class _PrivateFeedsState extends State<PrivateFeeds> {
   static NotificationModel likeInstance = NotificationModel();
-  Stream allCloseFriendFeeds;
-  Stream allFriendFeeds;
-  Stream allAcquaintanceFeeds;
-  Stream allPvtFollowingsFeeds;
-  Stream allFeeds;
-  int page = 0;
+  Stream allPvtFeeds;
 
   @override
   void initState(){
     super.initState();
-    Stream<QuerySnapshot> closeFriendFeeds = DatabaseService.instance.getAllCloseFriendsFeeds();
-    Stream<QuerySnapshot> friendsFeeds = DatabaseService.instance.getAllFriendsFeeds();
-    Stream<QuerySnapshot> acquaintanceFeeds = DatabaseService.instance.getAllAcquaintanceFeeds();
-    Stream<QuerySnapshot> followingsFeeds = DatabaseService.instance.getAllPvtFollowingsFeeds();
-    Stream<QuerySnapshot> allPvtFeeds = DatabaseService.instance.getAllMyPvtFeeds();
+    print(widget.feedOf);
+    print(UniversalVariables.myPvtUid);
+    Stream<QuerySnapshot> pfs = DatabaseService.instance.getAllMyPvtFeeds();
     setState(() {
-      allCloseFriendFeeds= closeFriendFeeds;
-      allFriendFeeds = friendsFeeds;
-      allAcquaintanceFeeds = acquaintanceFeeds;
-      allPvtFollowingsFeeds = followingsFeeds;
-      allFeeds = allPvtFeeds;
+      allPvtFeeds = pfs;
     });
   }
-
-
   @override
   Widget build(BuildContext context) {
+
 
     return Scaffold(
         appBar: PreferredSize(
@@ -75,7 +67,18 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
                     Spacer(),
                     GestureDetector(
                       onLongPress: () {
-                        //widget.hiberPopUp(true);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => CustomDialog(
+                            title: "Hibernation Mode",
+                            description:
+                            "Only selected messages will be accessable. Other features of the application cannot be used during hibernation",
+                            primaryButtonText: "Activate",
+                            primaryButtonRoute: "hybernation",
+                            secondaryButtonText: "Cancel",
+                            secondaryButtonRoute: "pageHandler",
+                          ),
+                        );
                       },
                       onTap: () {
                         Navigator.push(context,
@@ -96,114 +99,24 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
         ),
         body: ListView(children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.07,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      page = 0;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'All',
-                      style:
-                      TextStyle(color: page==0 ? primaryColor : grey, fontSize: 20.0),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      page = 1;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Close Friends',
-                      style:
-                      TextStyle(color: page==1 ? primaryColor : grey, fontSize: 20.0),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      page = 2;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Friends',
-                      style: TextStyle(
-                          color: page==2 ? primaryColor : grey, fontSize: 20.0),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      page = 3;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Acquaintance',
-                      style: TextStyle(
-                          color: page==3 ? primaryColor : grey, fontSize: 20.0),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      page = 4;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Followings',
-                          style: TextStyle(
-                              color: page==4 ? primaryColor : grey, fontSize: 20.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            height: 5.0,
-            color: Colors.black,
-          ),
-          Container(
               height: MediaQuery.of(context).size.height * 0.8,
-              child: page==0 ? listofallFeeds() : page==1 ? listofallCloseFriendFeeds() : page==2 ? listofallFriendsFeeds() : page==3 ? listofallAcquaintanceFeeds() : page==4 ? listofallPvtFollowingsFeeds() :  Container()
+              child: widget.feedOf!=null ? listofSelectedFeeds() : listofAllPvtFeeds(),
           ),
         ]));
   }
 
-  Widget listofallCloseFriendFeeds(){
+
+  Widget listofSelectedFeeds(){
     return StreamBuilder(
-        stream: allCloseFriendFeeds,
+        stream: widget.feedStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of CF feeds');
-            return Center(child: Container(child: Text('loading...')));
+            print('in waiting of Pvt feeds');
+            return Center(child: Container(child: CircularProgressIndicator()));
           }
 
           if (snapshot.data == null || snapshot.data.documents.length == 0) {
-            return Center(child: Container(child: Text('No close friend feeds')));
+            return Center(child: Container(child: Text('No feeds are posted by your ' + widget.feedOf)));
           }
           var posts = snapshot.data.documents;
           return Column(children: [
@@ -227,116 +140,13 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
         });
   }
 
-  Widget listofallFriendsFeeds(){
+  Widget listofAllPvtFeeds(){
     return StreamBuilder(
-        stream: allFriendFeeds,
+        stream: allPvtFeeds,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of F feeds');
-            return Center(child: Container(child: Text('loading...')));
-          }
-
-          if (snapshot.data == null || snapshot.data.documents.length == 0) {
-            return Center(child: Container(child: Text('No friend feeds')));
-          }
-          var posts = snapshot.data.documents;
-          return Column(children: [
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: posts.length,
-                itemBuilder: (context, i) {
-                  return Column(
-                    children: [
-                      postTile(posts[i]),
-                      Divider(
-                        height: 10.0,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
-          ]);
-        });
-  }
-
-
-  Widget listofallAcquaintanceFeeds(){
-    return StreamBuilder(
-        stream: allAcquaintanceFeeds,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of AQ feed');
-            return Center(child: Container(child: Text('loading...')));
-          }
-
-          if (snapshot.data == null || snapshot.data.documents.length == 0) {
-            return Center(child: Container(child: Text('No acquaintance feeds')));
-          }
-          var posts = snapshot.data.documents;
-          return Column(children: [
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: posts.length,
-                itemBuilder: (context, i) {
-                  return Column(
-                    children: [
-                      postTile(posts[i]),
-                      Divider(
-                        height: 10.0,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
-          ]);
-        });
-  }
-
-  Widget listofallPvtFollowingsFeeds(){
-    return StreamBuilder(
-        stream: allPvtFollowingsFeeds,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of following feeds');
-            return Center(child: Container(child: Text('loading...')));
-          }
-          if (snapshot.data == null || snapshot.data.documents.length == 0) {
-            return Center(child: Container(child: Text('No feeds')));
-          }
-          var posts = snapshot.data.documents;
-          return Column(children: [
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: posts.length,
-                itemBuilder: (context, i) {
-                  return Column(
-                    children: [
-                      postTile(posts[i]),
-                      Divider(
-                        height: 10.0,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
-          ]);
-        });
-  }
-
-
-  Widget listofallFeeds(){
-    return StreamBuilder(
-        stream: allFeeds,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print('in waiting of all feeds');
-            return Center(child: Container(child: Text('Loading....')));
+            print('in waiting of Pvt feeds');
+            return Center(child: Container(child: CircularProgressIndicator()));
           }
 
           if (snapshot.data == null || snapshot.data.documents.length == 0) {
@@ -363,13 +173,12 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
           ]);
         });
   }
-
 
   Widget postTile(QueryDocumentSnapshot post) {
 
     void addMyLikeToAPost(String postFrom, String postFor, String postId, String postUrl, String image) async {
-      print('post url of liked feed');
-      print(postUrl);
+      //print('post url of liked feed');
+      //print(postUrl);
       await DatabaseService.instance.getPvtProfileUrlofAUser(UniversalVariables.myPvtUid).then((value) {
         likeInstance = NotificationModel(
           type: 'Like',
@@ -468,7 +277,7 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
         child: Row(
           children: [
             SizedBox(width: 15.0),
-            post.data().containsKey('isLiked') && post.data()['isLiked']==true ? IconButton(icon: Icon(Icons.favorite),
+            post.data().containsKey('isLiked') && post.data()['isLiked']==true ? IconButton(icon: Icon(Icons.favorite, color: Colors.red,),
                 onPressed: () {
                   DatabaseService.instance.removeLikeFromAPostInMyPvtFeed(post.data()['postId'], post.data()['postFrom']);
                 }) : IconButton(
@@ -481,8 +290,7 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
             Container(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  //widget.user["like"] + " Yibed",
-                  '34 Yibed',
+                  post.data().containsKey('isLiked') && post.data()['isLiked']==true ? '1 Yibed' : '0 Yibed',
                   style: TextStyle(fontSize: 12),
                 )),
             Spacer(),
@@ -492,7 +300,7 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
                     return Comment(
                       //isPrivate: true,
                       profileImage: post.data()['image'],
-                      likeCount: '34',
+                      likeCount: post.data().containsKey('isLiked') && post.data()['isLiked']==true ? '1' : '0',
                       name: post.data()['name'],
                       time: timeago.format(DateTime.tryParse(post.data()['timestamp'].toDate().toString())).toString(),
                       type: post.data()['type'],
@@ -503,7 +311,6 @@ class _PrivateFeedsState extends State<PrivateFeeds> {
                   }));
                 },
                 child: SvgPicture.asset('assets/images/message_icon_homePage.svg')),
-            SizedBox(width: 15.0),
             SizedBox(width: 15.0),
             GestureDetector(
                 onTap: () {

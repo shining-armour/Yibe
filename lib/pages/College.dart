@@ -1,20 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:yibe_final_ui/helper/Constants.dart';
 import 'package:yibe_final_ui/model/acType.dart';
 import 'package:yibe_final_ui/pages/Message.dart';
+import 'package:yibe_final_ui/pages/Money.dart';
 import 'package:yibe_final_ui/pages/Notification.dart';
 import 'package:yibe_final_ui/pages/college_section_page.dart';
 import 'package:yibe_final_ui/services/database.dart';
-import 'package:yibe_final_ui/services/userdatabase.dart';
 import 'package:yibe_final_ui/utils/constants.dart';
-
-import 'Money/MoneyMatters.dart';
 import 'Preferences.dart';
+import 'package:yibe_final_ui/widget/custom_dialog_box.dart';
+import 'package:yibe_final_ui/utils/helper_functions.dart';
 
 class College extends StatefulWidget {
   static final routeName = "/College";
@@ -26,9 +23,9 @@ class College extends StatefulWidget {
 }
 
 class _CollegeState extends State<College> {
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
   int _currentIndex = 1;
+  bool isHibernation;
+
   Map profUserMap;
   List<String> cardList = [
     'assets/images/poster1.png',
@@ -40,7 +37,6 @@ class _CollegeState extends State<College> {
     'assets/images/hustle2.png',
     'assets/images/hustle3.png'
   ];
-  String devToken = "";
   List cardList1 = [Item4(), Item5(), Item6()];
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
@@ -51,27 +47,22 @@ class _CollegeState extends State<College> {
   }
 
   @override
-  void initState() {
-    _updateUser();
+  void initState(){
+   // getUserInfoFromSP();
     super.initState();
-    DatabaseService.instance
-        .getProfCurrentUserInfo()
-        .then((value) => setState(() {
-              profUserMap = value;
-            }));
+    DatabaseService.instance.getProfCurrentUserInfo().then((value) => setState(() {
+      profUserMap = value;
+    }));
+
   }
 
-  void _updateUser() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    await FirebaseMessaging().getToken().then((deviceToken) {
-      setState(() {
-        devToken = deviceToken;
-      });
-    });
-    await UserDatabaseService(uid: Constants.uid).updateUserDataWithDetails(
-        position.latitude, position.longitude, devToken);
-  }
+ /* void getUserInfoFromSP() {
+    HelperFunction.getUserProfUidSharedPreference().then((value) =>
+        setState(() {
+          UniversalVariables.myProfUid = value;
+          print('prof uid : '+ UniversalVariables.myProfUid + ' in pvt home page');
+   }));
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +93,8 @@ class _CollegeState extends State<College> {
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return NotificationPage();
-                        }));
+                              return NotificationPage();
+                            }));
                       },
                       child: Icon(
                         Icons.notifications_none,
@@ -115,13 +106,24 @@ class _CollegeState extends State<College> {
                     Spacer(),
                     GestureDetector(
                         onLongPress: () {
-                          widget.hiberPopUp(true);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => CustomDialog(
+                              title: "Hibernation Mode",
+                              description:
+                              "Only selected messages will be accessable. Other features of the application cannot be used during hibernation",
+                              primaryButtonText: "Activate",
+                              primaryButtonRoute: "hybernation",
+                              secondaryButtonText: "Cancel",
+                              secondaryButtonRoute: "pageHandler",
+                            ),
+                          );
                         },
                         onTap: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return Messages();
-                          }));
+                                return Messages();
+                              }));
                         },
                         child: Icon(Icons.send, color: Colors.black, size: 28)),
                     SizedBox(
@@ -157,19 +159,14 @@ class _CollegeState extends State<College> {
                         onTap: () {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
-                            return Preferences();
-                          }));
+                                return Preferences();
+                              }));
                         },
                         child: Consumer<AcType>(
-                          builder: (context, model, child) => Container(
-                            child: Text(
-                              model.isPrivate
-                                  ? UniversalVariables.myPvtFullName
-                                  : profUserMap['BusinessName'],
-                              style: TextStyle(
-                                  color: Color(0xff008294),
-                                  fontSize: 45,
-                                  fontWeight: FontWeight.bold),
+                          builder:(context, model,child) => Container(
+                            child: Text(model.isPrivate ? UniversalVariables.myPvtFullName : profUserMap['BusinessName'], style: TextStyle(color: Color(0xff008294),
+                                fontSize: 45,
+                                fontWeight: FontWeight.bold),
                             ),
                           ),
                         )),
@@ -191,10 +188,10 @@ class _CollegeState extends State<College> {
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return CollegeSectionPage(
-                                activepassedvalue: 0,
-                              );
-                            }));
+                                  return CollegeSectionPage(
+                                    activepassedvalue: 0,
+                                  );
+                                }));
                           },
                           child: Container(
                               height: 250,
@@ -219,10 +216,10 @@ class _CollegeState extends State<College> {
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return CollegeSectionPage(
-                                activepassedvalue: 1,
-                              );
-                            }));
+                                  return CollegeSectionPage(
+                                    activepassedvalue: 1,
+                                  );
+                                }));
                           },
                           child: Container(
                               height: 200,
@@ -247,10 +244,10 @@ class _CollegeState extends State<College> {
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return CollegeSectionPage(
-                                activepassedvalue: 2,
-                              );
-                            }));
+                                  return CollegeSectionPage(
+                                    activepassedvalue: 2,
+                                  );
+                                }));
                           },
                           child: Container(
                               height: 200,
@@ -275,8 +272,8 @@ class _CollegeState extends State<College> {
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return MoneyMatters(Constants.uid);
-                            }));
+                                  return Money();
+                                }));
                           },
                           child: Container(
                               height: 200,
@@ -314,32 +311,21 @@ class _CollegeState extends State<College> {
 
                   //
 
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return CollegeSectionPage(
-                          activepassedvalue: 0,
-                        );
-                      }));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      child: RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                            text: "Hot ",
-                            style: TextStyle(
-                              fontSize: 36,
-                              color:
-                                  Color.fromRGBO(9, 128, 145, 1), //Green shade
-                            )),
-                        TextSpan(
-                          text: "'n Happening",
-                          style: TextStyle(fontSize: 36, color: Colors.black),
-                        )
-                      ])),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: "Hot ",
+                              style: TextStyle(
+                                fontSize: 36,
+                                color: Color.fromRGBO(9, 128, 145, 1), //Green shade
+                              )),
+                          TextSpan(
+                            text: "'n Happening",
+                            style: TextStyle(fontSize: 36, color: Colors.black),
+                          )
+                        ])),
                   ),
                   CarouselSlider(
                     options: CarouselOptions(
@@ -381,33 +367,22 @@ class _CollegeState extends State<College> {
                       });
                     }).toList(),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return CollegeSectionPage(
-                          activepassedvalue: 2,
-                        );
-                      }));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 8.0),
-                      child: RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                            text: "Vibe ",
-                            style: TextStyle(
-                              fontSize: 36,
-                              color:
-                                  Color.fromRGBO(9, 128, 145, 1), //Green shade
-                            )),
-                        TextSpan(
-                          text: "with someone",
-                          style: TextStyle(fontSize: 36, color: Colors.black),
-                        )
-                      ])),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 8.0),
+                    child: RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: "Vibe ",
+                              style: TextStyle(
+                                fontSize: 36,
+                                color: Color.fromRGBO(9, 128, 145, 1), //Green shade
+                              )),
+                          TextSpan(
+                            text: "with someone",
+                            style: TextStyle(fontSize: 36, color: Colors.black),
+                          )
+                        ])),
                   ),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 15),
@@ -422,38 +397,28 @@ class _CollegeState extends State<College> {
                         borderRadius: BorderRadius.circular(10),
                         image: DecorationImage(
                             image:
-                                AssetImage("assets/images/collegePage_map.png"),
+                            AssetImage("assets/images/collegePage_map.png"),
                             fit: BoxFit.cover)),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return CollegeSectionPage(
-                          activepassedvalue: 1,
-                        );
-                      }));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15, right: 15, top: 8, bottom: 8),
-                      child: RichText(
-                          text: TextSpan(children: [
-                        TextSpan(
-                            text: "Everyday ",
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15, right: 15, top: 8, bottom: 8),
+                    child: RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: "Everyday ",
+                              style: TextStyle(
+                                fontSize: 36,
+                                color: Colors.black, //Green shade
+                              )),
+                          TextSpan(
+                            text: "Hustle",
                             style: TextStyle(
                               fontSize: 36,
-                              color: Colors.black, //Green shade
-                            )),
-                        TextSpan(
-                          text: "Hustle",
-                          style: TextStyle(
-                            fontSize: 36,
-                            color: Color.fromRGBO(9, 128, 145, 1),
-                          ),
-                        )
-                      ])),
-                    ),
+                              color: Color.fromRGBO(9, 128, 145, 1),
+                            ),
+                          )
+                        ])),
                   ),
                   CarouselSlider(
                     options: CarouselOptions(
@@ -564,7 +529,7 @@ class Item1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+      BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -586,7 +551,7 @@ class Item2 extends StatelessWidget {
     return Stack(children: <Widget>[
       Container(
         decoration:
-            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+        BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -608,7 +573,7 @@ class Item3 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+      BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -629,7 +594,7 @@ class Item4 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+      BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -650,7 +615,7 @@ class Item5 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+      BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -671,7 +636,7 @@ class Item6 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
+      BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[

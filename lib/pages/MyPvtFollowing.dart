@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yibe_final_ui/services/database.dart';
+import 'package:yibe_final_ui/pages/viewOtherUserProfProfile.dart';
+import 'package:yibe_final_ui/services/navigation_service.dart';
 
 class MyPrivateFollowings extends StatefulWidget {
   @override
@@ -39,11 +41,26 @@ class _MyPrivateFollowingsState extends State<MyPrivateFollowings> {
               itemBuilder: (context, i) {
                 return Column(
                   children: [
-                    ListTile(
-                        title: Text(users[i].data()['name']),
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(users[i].data()['url']),
-                        )),
+                    GestureDetector(
+                      onTap:(){
+                        DatabaseService.instance.getAnyProfUserInfo(users[i].data()['uid']).then((value) => {
+                          NavigationService.instance.pushTo( MaterialPageRoute(builder: (context) => ViewOtherUserProfProfile(
+                            navigatedFromPrivateAc: true,
+                            otherUserPvtUid: value['pvtId'],
+                            otherUserProfUid: value['profId'],
+                            otherUserBusinessName: value['BusinessName'],
+                            otherUserProfile: value['profUrl'],
+                            otherUserBio: value['BusinessBio'] ?? 'Bio is Empty',
+                            otherUserName: value['profUserName'],
+                          )))
+                        });
+                        },
+                      child: ListTile(
+                          title: Text(users[i].data()['name']),
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(users[i].data()['url']),
+                          )),
+                    ),
                     Divider(
                       height: 10.0,
                     ),

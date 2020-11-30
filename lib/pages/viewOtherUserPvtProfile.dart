@@ -12,16 +12,17 @@ import 'package:yibe_final_ui/utils/constants.dart';
 import 'package:yibe_final_ui/pages/Conversation.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-//TODO: If not connected, do not show posts
+
 double screenWidth;
 
 class ViewOtherUserPvtProfile extends StatefulWidget {
+  final bool navigatedFromPrivateAc;
   final String otherUserUid;
   final String otherUserFullName;
   final String otherUserName;
   final String otherUserProfile;
   final String otherUserBio;
-  const ViewOtherUserPvtProfile({this.otherUserUid, this.otherUserFullName, this.otherUserName, this.otherUserProfile, this.otherUserBio});
+  const ViewOtherUserPvtProfile({this.otherUserUid, this.otherUserFullName, this.otherUserName, this.otherUserProfile, this.otherUserBio, this.navigatedFromPrivateAc});
 
   @override
   _ViewOtherUserPvtProfileState createState() => _ViewOtherUserPvtProfileState();
@@ -375,7 +376,7 @@ class _ViewOtherUserPvtProfileState extends State<ViewOtherUserPvtProfile> {
                       onTap: (){removeUserFromMyConnection(context);},
                     ),
                     Spacer(),
-                    GestureDetector(
+                    InkWell(
                       onTap:() {
                           DatabaseService.instance.createOrGetConversation(widget.otherUserUid, 'Private', 'Private', (String chatRoomId) {
                             print(chatRoomId + 'In Future on Success');
@@ -389,7 +390,7 @@ class _ViewOtherUserPvtProfileState extends State<ViewOtherUserPvtProfile> {
                                     otherUserName: widget.otherUserName,
                                     otherUserProfileUrl: widget.otherUserProfile)));
                           }
-                          );} ,//TODO: Open chatscreen
+                          );},//TODO: Open chatscreen
                       child: Container(
                         width: 140.0,
                         height: 28.0,
@@ -585,7 +586,7 @@ class _ViewOtherUserPvtProfileState extends State<ViewOtherUserPvtProfile> {
                       SizedBox(
                         width: screenWidth,
                         child: ownPhoto
-                            ? Container(
+                            ? didConnected ? Container(
                           width: screenWidth,
                           height: 300,
                           child: StreamBuilder<QuerySnapshot>(
@@ -635,7 +636,10 @@ class _ViewOtherUserPvtProfileState extends State<ViewOtherUserPvtProfile> {
                                     });
                               }),
                         )
-                            : Center(child: Text('tag photoes')),
+                            : Center(child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 30.0),
+                              child: Container( child: Text('Get connected to view posts')),
+                            )) : Container()
                       ),
                     ]),
                   )
@@ -697,7 +701,7 @@ class _ViewOtherUserPvtProfileState extends State<ViewOtherUserPvtProfile> {
                       SizedBox(
                         width: screenWidth,
                         child: museList
-                            ? Container(
+                            ? didConnected ? Container(
                             width: screenWidth,
                             height: 300,
                             child: StreamBuilder<QuerySnapshot>(
@@ -826,10 +830,8 @@ class _ViewOtherUserPvtProfileState extends State<ViewOtherUserPvtProfile> {
                                                   Spacer(),
                                                   IconButton(
                                                     icon: Icon(
-                                                      Icons
-                                                          .favorite,
-                                                      color: Colors
-                                                          .red,
+                                                      Icons.favorite,
+                                                      color: Colors.red,
                                                     ),
                                                     onPressed:
                                                         () {},
@@ -841,7 +843,10 @@ class _ViewOtherUserPvtProfileState extends State<ViewOtherUserPvtProfile> {
                                         );
                                       });
                                 }))
-                            : SizedBox(child: Text('Muse part')),
+                            : Center(child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 30.0),
+                          child: Container( child: Text('Get connected to view muse')),
+                        )) : Container()
                       ),
                     ]),
                   )

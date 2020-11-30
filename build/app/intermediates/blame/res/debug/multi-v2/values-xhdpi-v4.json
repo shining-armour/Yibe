@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\alenj\\Desktop\\Yibe-updated-3\\Yibe-updated-3\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-xhdpi-v4\\values-xhdpi-v4.xml",
+            "outputFile": "C:\\Users\\admin\\Downloads\\Yibe\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-xhdpi-v4\\values-xhdpi-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\alenj\\.gradle\\caches\\transforms-2\\files-2.1\\ce98687370387dd823f7fc9e6b1bc051\\jetified-core-1.9.13\\res\\values-xhdpi-v4\\values-xhdpi-v4.xml",
+                    "source": "C:\\Users\\admin\\.gradle\\caches\\transforms-2\\files-2.1\\74e9ca7732be525ae075d25b29c9eaa8\\jetified-core-1.9.13\\res\\values-xhdpi-v4\\values-xhdpi-v4.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

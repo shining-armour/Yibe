@@ -148,7 +148,7 @@ class _GalleryState extends State<Gallery> {
                       width: 20,
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () => NavigationService.instance.goBack(),
                       child: SvgPicture.asset(
                         "assets/images/back_btn.svg",
                         width: 30,

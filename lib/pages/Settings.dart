@@ -43,20 +43,21 @@ class _SettingsState extends State<Settings> {
                 itemBuilder: (context, i) {
                   return Column(
                     children: [
-                    /*  Consumer<AcType>(
-                        builder: (context, model, child) =>*/
+                     Consumer<AcType>(
+                        builder: (context, model, child) =>
                             ListTile(
                           title: Text('Sign Out', style: TextStyle(fontWeight: FontWeight.bold)),
                           onTap: (){
                             AuthenticationService.instance.signOut();
-                           // model.changeAcType();
+                            model.setDefaultAcTypeToPrivate();
+                            model.setFeedStreamToNull();
                             Navigator.pushAndRemoveUntil(context,
                                 MaterialPageRoute(
                                     builder: (_) => FirstView()),
                                 ModalRoute.withName('/firstView'));
                           },
                         ),
-                     // ),
+                     ),
                       !haveProfAc ? ListTile(
                         title: Text('Create Professional Account', style: TextStyle(fontWeight: FontWeight.bold)),
                         onTap: () =>NavigationService.instance.pushNamedTo('setUpProfAc'),

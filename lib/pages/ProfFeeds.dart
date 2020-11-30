@@ -9,6 +9,7 @@ import 'package:yibe_final_ui/pages/comments.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:yibe_final_ui/pages/Message.dart';
 import 'package:yibe_final_ui/pages/Notification.dart';
+import 'package:yibe_final_ui/widget/custom_dialog_box.dart';
 
 class ProfFeeds extends StatefulWidget {
 
@@ -18,21 +19,19 @@ class ProfFeeds extends StatefulWidget {
 
 class _ProfFeedsState extends State<ProfFeeds> {
   static NotificationModel likeInstance = NotificationModel();
-  List<DocumentSnapshot> _profFeedList;
+  Stream ProfFollowingStream;
 
   @override
   void initState(){
     super.initState();
-    DatabaseService.instance.getAllMyProfFeeds().listen((dataSnapshot) {
-      setState(() {
-        _profFeedList = dataSnapshot.docs;
-      });
+    Stream<QuerySnapshot> pfs = DatabaseService.instance.getAllMyProfFeeds();
+    setState(() {
+      ProfFollowingStream = pfs;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if(_profFeedList!=null) {
       return Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(46.0),
@@ -62,7 +61,17 @@ class _ProfFeedsState extends State<ProfFeeds> {
                     Spacer(),
                     GestureDetector(
                       onLongPress: () {
-                        //widget.hiberPopUp(true);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => CustomDialog(
+                            title: "Hibernation Mode",
+                            description:  "Only selected messages will be accessable. Other features of the application cannot be used during hibernation",
+                            primaryButtonText: "Activate",
+                            primaryButtonRoute: "hybernation",
+                            secondaryButtonText: "Cancel",
+                            secondaryButtonRoute: "pageHandler",
+                          ),
+                        );
                       },
                       onTap: () {
                         Navigator.push(context,
@@ -81,24 +90,49 @@ class _ProfFeedsState extends State<ProfFeeds> {
             ],
           ),
         ),
-        body: ListView.builder(
-          itemCount: _profFeedList.length,
-          itemBuilder: (context, i) {
-            return Column(
-              children: [
-                Divider(
-                  height: 10.0,
-                ),
-                postTile(_profFeedList[i]),
-              ],
-            );
-          },
-        ),
-      );
-    } else{
-      return Scaffold(body: Center(child: Container(child: Text('No feeds'))));
-    }
+        body: ListView(children: [
+          Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: listofProfFeeds(),
+          ),
+        ]));
   }
+
+  Widget listofProfFeeds(){
+    return StreamBuilder(
+        stream: ProfFollowingStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            print('in waiting of F feeds');
+            return Center(child: Container(child: CircularProgressIndicator()));
+          }
+
+          if (snapshot.data == null || snapshot.data.documents.length == 0) {
+            return Center(child: Container(child: Text('No feeds are posted by your professional followings')));
+          }
+
+          var posts = snapshot.data.documents;
+          return Column(children: [
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: posts.length,
+                itemBuilder: (context, i) {
+                  return Column(
+                    children: [
+                      postTile(posts[i]),
+                      Divider(
+                        height: 10.0,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            )
+          ]);
+        });
+  }
+
 
   Widget postTile(QueryDocumentSnapshot post) {
 
@@ -118,7 +152,6 @@ class _ProfFeedsState extends State<ProfFeeds> {
       });
     }
 
-    //TODO : Update profile pic of the user
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       ListTile(
         leading: CircleAvatar(
@@ -201,7 +234,7 @@ class _ProfFeedsState extends State<ProfFeeds> {
         child: Row(
           children: [
             SizedBox(width: 15.0),
-            post.data().containsKey('isLiked') && post.data()['isLiked']==true ? IconButton(icon: Icon(Icons.favorite),
+            post.data().containsKey('isLiked') && post.data()['isLiked']==true ? IconButton(icon: Icon(Icons.favorite, color: Colors.red,),
                 onPressed: () {
                   DatabaseService.instance.removeLikeFromAPostInMyProfFeed(post.data()['postId'], post.data()['postFrom']);
                 }) : IconButton(
@@ -214,8 +247,7 @@ class _ProfFeedsState extends State<ProfFeeds> {
             Container(
                 alignment: Alignment.bottomLeft,
                 child: Text(
-                  //widget.user["like"] + " Yibed",
-                  '34 Yibed',
+                  post.data().containsKey('isLiked') && post.data()['isLiked']==true ? '1 Yibed' : '0 Yibed',
                   style: TextStyle(fontSize: 12),
                 )),
             Spacer(),
@@ -225,7 +257,7 @@ class _ProfFeedsState extends State<ProfFeeds> {
                     return Comment(
                       //isPrivate: true,
                       profileImage: post.data()['image'],
-                      likeCount: '34',
+                      likeCount: post.data().containsKey('isLiked') && post.data()['isLiked']==true ? '1' : '0',
                       name: post.data()['name'],
                       time: timeago.format(DateTime.tryParse(post.data()['timestamp'].toDate().toString())).toString(),
                       type: post.data()['type'],

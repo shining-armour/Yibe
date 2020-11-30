@@ -282,7 +282,7 @@ class _ProfileState extends State<Profile> {
                       children: [
                         Column(
                           children: [
-                            GestureDetector(
+                            InkWell(
                               onTap: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
@@ -310,7 +310,7 @@ class _ProfileState extends State<Profile> {
                           ],
                         ),
                         SizedBox(width: 70),
-                        GestureDetector(
+                       InkWell(
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
@@ -343,7 +343,7 @@ class _ProfileState extends State<Profile> {
                       : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        GestureDetector(
+                        InkWell(
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
@@ -373,7 +373,7 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                         SizedBox(width: 70),
-                        GestureDetector(
+                        InkWell(
                           onTap: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
@@ -434,6 +434,7 @@ class _ProfileState extends State<Profile> {
                             ),
                           ),
                         ),
+
                     /*  Spacer(),
                       Container(
                         width: 140.0,

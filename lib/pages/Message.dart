@@ -437,9 +437,9 @@ class _MessagesState extends State<Messages> {
                         return Column(
                           children: [
                             conversationSnippet[i].chattingWithId.contains('-')
-                                ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
-                                : conversationSnippet[i].image!=null ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
-                            ConversationSnippetListTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
+                                ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
+                                : conversationSnippet[i].image!=null ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
+                            ConversationSnippetTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
                             Divider(
                               height: 10.0,
                             ),
@@ -494,9 +494,9 @@ class _MessagesState extends State<Messages> {
                         return Column(
                           children: [
                             conversationSnippet[i].chattingWithId.contains('-')
-                                ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
-                                : conversationSnippet[i].image!=null ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
-                            ConversationSnippetListTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
+                                ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
+                                : conversationSnippet[i].image!=null ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
+                            ConversationSnippetTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
                             Divider(
                               height: 10.0,
                             ),
@@ -551,9 +551,9 @@ class _MessagesState extends State<Messages> {
                         return Column(
                           children: [
                             conversationSnippet[i].chattingWithId.contains('-')
-                                ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
-                                : conversationSnippet[i].image!=null ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
-                            ConversationSnippetListTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
+                                ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
+                                : conversationSnippet[i].image!=null ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
+                            ConversationSnippetTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
                             Divider(
                               height: 10.0,
                             ),
@@ -609,9 +609,9 @@ class _MessagesState extends State<Messages> {
                         return Column(
                           children: [
                             conversationSnippet[i].chattingWithId.contains('-')
-                                ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
-                                : conversationSnippet[i].image!=null ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
-                            ConversationSnippetListTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
+                                ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
+                                : conversationSnippet[i].image!=null ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
+                            ConversationSnippetTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
                             Divider(
                               height: 10.0,
                             ),
@@ -666,9 +666,9 @@ class _MessagesState extends State<Messages> {
                         return Column(
                           children: [
                             conversationSnippet[i].chattingWithId.contains('-')
-                                ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
-                                : conversationSnippet[i].image!=null ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
-                            ConversationSnippetListTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
+                                ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
+                                : conversationSnippet[i].image!=null ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
+                            ConversationSnippetTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
                             Divider(
                               height: 10.0,
                             ),
@@ -693,7 +693,6 @@ class _MessagesState extends State<Messages> {
           // ignore: missing_return
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              print('in waiting of CF');
               return Center(child: Container(child: CircularProgressIndicator(),));
             }
 
@@ -722,9 +721,9 @@ class _MessagesState extends State<Messages> {
                         return Column(
                           children: [
                             conversationSnippet[i].chattingWithId.contains('-')
-                                ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
-                                : conversationSnippet[i].image!=null ? ConversationSnippetListTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
-                            ConversationSnippetListTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
+                                ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,)
+                                : conversationSnippet[i].image!=null ? ConversationSnippetTile(snippet: conversationSnippet[i], url:conversationSnippet[i].image,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,):
+                            ConversationSnippetTile(snippet: conversationSnippet[i], url:UniversalVariables.defaultImageUrl,checkBoxesEnabled: checkBoxesEnabled,checkBoxActive: checkBoxActive,),
                             Divider(
                               height: 10.0,
                             ),
@@ -743,26 +742,20 @@ class _MessagesState extends State<Messages> {
 
 
 
-
-
-
-
-
-class ConversationSnippetListTile extends StatefulWidget {
-
+class ConversationSnippetTile extends StatefulWidget {
   ConversationSnippet snippet;
   String url;
   bool checkBoxesEnabled;
   bool checkBoxActive;
 
-  ConversationSnippetListTile(
+  ConversationSnippetTile(
       {this.snippet, this.url, this.checkBoxActive, this.checkBoxesEnabled,});
 
   @override
-  _ConversationSnippetListTileState createState() => _ConversationSnippetListTileState();
+  _ConversationSnippetTileState createState() => _ConversationSnippetTileState();
 }
 
-class _ConversationSnippetListTileState extends State<ConversationSnippetListTile> {
+class _ConversationSnippetTileState extends State<ConversationSnippetTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -788,45 +781,33 @@ class _ConversationSnippetListTileState extends State<ConversationSnippetListTil
               chatRoomId: widget.snippet.chatRoomId,
               typeOfConversation: widget.snippet.typeOfConversation,
             )));
-
       },
-      title: Text(widget.snippet.fullname),
-      subtitle: Text(widget.snippet.type == MessageType.Text
-          ? widget.snippet.lastMessage
-          : 'Attachment: Image'),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+        Text(widget.snippet.fullname),
+            widget.checkBoxesEnabled
+                ? Checkbox(
+                value: widget.checkBoxActive,
+                activeColor: green,
+                onChanged: (bool newValue) async {
+                  setState(() {
+                    widget.checkBoxActive = newValue;
+                  });
+                  if (widget.checkBoxActive) {
+                    widget.snippet.acType=='Private' ? DatabaseService.instance.addThisPvtChatToSelective(widget.snippet.chattingWithId) : DatabaseService.instance.addThisProfChatToSelective(widget.snippet.chattingWithId);
+                  } else {
+                    widget.snippet.acType=='Private' ? DatabaseService.instance.removeThisPvtChatFromSelective(widget.snippet.chattingWithId) : DatabaseService.instance.removeThisProfChatFromSelective(widget.snippet.chattingWithId);
+                  }
+                })
+                : Text(timeago
+        .format(DateTime.tryParse(
+        widget.snippet.timestamp.toDate().toString()))
+        .toString()),
+          ]),
+      subtitle: Text(widget.snippet.type == MessageType.Text ? widget.snippet.lastMessage.length > 35 ? widget.snippet.lastMessage.substring(0,35)+'...' : widget.snippet.lastMessage : 'Attachment: Image'),
       leading: CircleAvatar(
         backgroundImage: NetworkImage(widget.url),
-      ),
-      trailing: widget.checkBoxesEnabled
-          ? Checkbox(
-          value: widget.checkBoxActive,
-          activeColor: green,
-          onChanged: (bool newValue) async {
-            setState(() {
-              widget.checkBoxActive = newValue;
-            });
-            if (widget.checkBoxActive) {
-              widget.snippet.acType=='Private' ? DatabaseService.instance.addThisPvtChatToSelective(widget.snippet.chattingWithId) : DatabaseService.instance.addThisProfChatToSelective(widget.snippet.chattingWithId);
-            } else {
-              widget.snippet.acType=='Private' ? DatabaseService.instance.removeThisPvtChatFromSelective(widget.snippet.chattingWithId) : DatabaseService.instance.removeThisProfChatFromSelective(widget.snippet.chattingWithId);
-            }
-          })
-          : Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          Text(
-            'Last Message',
-            style: TextStyle(fontSize: 15),
-          ),
-          widget.snippet.timestamp != null
-              ? Text(timeago
-              .format(DateTime.tryParse(
-              widget.snippet.timestamp.toDate().toString()))
-              .toString())
-              : Text('timestamp null'),
-        ],
       ),
     );
   }

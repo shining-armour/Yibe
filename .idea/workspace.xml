@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:master" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="33b2f30a-4efa-4781-9652-136b74f4d400" name="Default Changelist" comment="FIXed growth.dart" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dart File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1kdqDbPJmlpUgpvxcdcZJDmSgL8" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="dart.analysis.tool.window.force.activate" value="false" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="io.flutter.reload.alreadyRun" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="flutter.settings" />
+    <property name="show.migrate.to.gradle.popup" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\alenj\Desktop\Yibe-new\lib\services" />
+      <recent name="C:\Users\alenj\Desktop\Yibe-Rafat\lib\widget" />
+      <recent name="C:\Users\alenj\Desktop\Yibe-Rafat\lib\pages" />
+      <recent name="C:\Users\alenj\Desktop\Yibe-Rafat\lib\model" />
+      <recent name="C:\Users\alenj\Desktop\Yibe-Rafat\lib\services" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\alenj\Desktop\New folder (2)(1)\android\app" />
+      <recent name="C:\Users\alenj\Desktop\New folder (2)(1)\android" />
+      <recent name="C:\Users\alenj\Desktop\New folder (2)(1)\android\app\src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
+      <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="33b2f30a-4efa-4781-9652-136b74f4d400" name="Default Changelist" comment="" />
+      <created>1606040697757</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1606040697757</updated>
+    </task>
+    <task id="LOCAL-00001" summary="All">
+      <created>1606211106390</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1606211106390</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Resume.dart">
+      <created>1606448316406</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1606448316406</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Resume.dart..">
+      <created>1606448642711</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1606448642711</updated>
+    </task>
+    <task id="LOCAL-00004" summary="FIXed money_database.dart">
+      <created>1606556439208</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1606556439208</updated>
+    </task>
+    <task id="LOCAL-00005" summary="FIXed growth.dart">
+      <created>1606557176702</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1606557176702</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="All" />
+    <MESSAGE value="Resume.dart" />
+    <MESSAGE value="Resume.dart.." />
+    <MESSAGE value="FIXed money_database.dart" />
+    <MESSAGE value="FIXed growth.dart" />
+    <option name="LAST_COMMIT_MESSAGE" value="FIXed growth.dart" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="654" y="295" key="#Notifications" timestamp="1606211190919">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="654" y="295" key="#Notifications/0.0.1536.864@0.0.1536.864" timestamp="1606211190919" />
+    <state x="663" y="305" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606228798964">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="663" y="305" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1606228798964" />
+    <state x="423" y="29" key="CommitChangelistDialog2" timestamp="1606711358052">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="423" y="29" key="CommitChangelistDialog2/0.0.1536.864@0.0.1536.864" timestamp="1606711358052" />
+    <state x="548" y="187" key="FileChooserDialogImpl" timestamp="1606712096128">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="548" y="187" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1606712096128" />
+    <state width="1491" height="176" key="GridCell.Tab.0.bottom" timestamp="1606578143638">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1491" height="176" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1606578143638" />
+    <state width="1846" height="311" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606321309246" />
+    <state width="1491" height="176" key="GridCell.Tab.0.center" timestamp="1606578143638">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1491" height="176" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1606578143638" />
+    <state width="1846" height="311" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606321309245" />
+    <state width="1491" height="176" key="GridCell.Tab.0.left" timestamp="1606578143638">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1491" height="176" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1606578143638" />
+    <state width="1846" height="311" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606321309245" />
+    <state width="1491" height="176" key="GridCell.Tab.0.right" timestamp="1606578143638">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1491" height="176" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1606578143638" />
+    <state width="1846" height="311" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606321309246" />
+    <state x="147" y="69" key="MergeDialog" timestamp="1606448424281">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="147" y="69" key="MergeDialog/0.0.1536.864@0.0.1536.864" timestamp="1606448424281" />
+    <state x="407" y="194" key="MultipleFileMergeDialog" timestamp="1606448424287">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="407" y="194" key="MultipleFileMergeDialog/0.0.1536.864@0.0.1536.864" timestamp="1606448424287" />
+    <state x="277" y="77" key="SettingsEditor" timestamp="1606712098752">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="277" y="77" key="SettingsEditor/0.0.1536.864@0.0.1536.864" timestamp="1606712098752" />
+    <state x="346" y="93" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1606224107005" />
+    <state x="361" y="165" key="Vcs.Push.Dialog.v2" timestamp="1606711438681">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="361" y="165" key="Vcs.Push.Dialog.v2/0.0.1536.864@0.0.1536.864" timestamp="1606711438681" />
+    <state x="100" y="100" width="1720" height="840" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1606315108122">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="100" y="100" width="1720" height="840" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1606315108122" />
+    <state x="490" y="221" key="git4idea.merge.GitPullDialog" timestamp="1606448373499">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="490" y="221" key="git4idea.merge.GitPullDialog/0.0.1536.864@0.0.1536.864" timestamp="1606448373499" />
+    <state x="570" y="339" key="git4idea.remote.GitConfigureRemotesDialog" timestamp="1606211335732">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="570" y="339" key="git4idea.remote.GitConfigureRemotesDialog/0.0.1536.864@0.0.1536.864" timestamp="1606211335732" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/pages/college_section_page.dart</url>
+          <line>99</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="Dart">
+          <url>file://$PROJECT_DIR$/lib/pages/college_section_page.dart</url>
+          <line>59</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
